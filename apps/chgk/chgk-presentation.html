@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ЧГК | Презентация</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+      .bd-mode-toggle .dropdown-menu .active .bi {
+        display: block !important;
+      }
+
+      html, body {
+        height: 100%;
+        min-height: 100vh;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      main {
+        flex: 1 0 auto;
+        padding-top: 56px;
+      }
+      footer {
+        flex-shrink: 0;
+      }
+
+      .black{
+        color:rgba(0, 0, 0, 0.803);
+        background-color: rgba(97, 97, 97, 0.325);
+        border-radius: 10px;
+      }
+
+      #liveAlertPlaceholder {
+        position: fixed;
+        top: 70px; /* чуть ниже navbar */
+        left: 0;
+        right: 0;
+        z-index: 2000;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #liveAlertPlaceholder .alert {
+        pointer-events: auto;
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body class="d-flex flex-column min-vh-100 p-0 m-0 border-0 bd-example" style="height:100vh;overflow:hidden;">
+
+    <div id="liveAlertPlaceholder" role="alert"></div>
+
+    <!-- Верхние углы -->
+    <button id="exitBtn" class="btn btn-outline-danger position-fixed top-0 start-0 m-3 z-3" style="min-width:100px;">Выйти</button>
+
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center" style="height:100vh; padding-bottom:145px;">
+      <div id="presentationContainer" class="w-100 h-100 d-flex align-items-center justify-content-center"></div>
+    </main>
+
+    <!-- Футер с кнопками и громкостью -->
+    <footer class="bg-body-tertiary text-center text-lg-start border-top position-fixed bottom-0 start-0 w-100 z-3" style="height:44px;">
+      <div class="container h-100 d-flex align-items-center justify-content-between px-2">
+        <span id="footerGameId" class="fw-bold small"></span>
+        <span id="footerPlayers" class="text-secondary small"></span>
+        <span id="footerSlide" class="text-secondary small"></span>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-outline-primary btn-sm" id="prevBtn" style="min-width:70px;">Назад</button>
+          <button class="btn btn-primary btn-sm" id="nextBtn" style="min-width:70px;">Далее</button>
+          <span class="ms-2 small">Громкость:</span>
+          <input type="range" min="0" max="1" step="0.01" value="0.3" id="volumeSlider" style="width:70px;">
+          <button id="exitBtn" class="btn btn-outline-danger btn-sm ms-2" style="min-width:70px;">Выйти</button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- FIREBASE + JS -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+      import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+      import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+        authDomain: "artenetshop-7b884.firebaseapp.com",
+        projectId: "artenetshop-7b884",
+        storageBucket: "artenetshop-7b884.appspot.com",
+        messagingSenderId: "542098227452",
+        appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+        measurementId: "G-8PDLBR77YN",
+        databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const analytics = getAnalytics(app);
+      const user = sessionStorage.getItem('isLoggedIn');
+      const db = getDatabase(app);
+
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+
+      const appendAlert = (message, type) => {
+        // Удалим лишние алерты, если их больше двух
+        while (alertPlaceholder.children.length >= 2) {
+          alertPlaceholder.removeChild(alertPlaceholder.firstChild);
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = `alert alert-${type} alert-dismissible fade show`;
+        wrapper.role = 'alert';
+        wrapper.innerHTML = `
+          <div>${message}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        alertPlaceholder.append(wrapper);
+
+        // Удаление алерта через 10 секунд
+        setTimeout(() => {
+          wrapper.classList.remove("show"); // плавное исчезновение
+          setTimeout(() => wrapper.remove(), 150); // удаление из DOM
+        }, 10000);
+      };
+
+
+      onAuthStateChanged(auth, async (user) => {
+        if (!user || !user.emailVerified) {
+          window.location.href = "../index.html";
+          return;
+        }
+        // Получаем данные пользователя
+        const userDbRef = ref(db, `users/${user.uid}`);
+        const userDbSnap = await get(userDbRef);
+        const userData = userDbSnap.exists() ? userDbSnap.val() : {};
+        if (!userData.isAdmin) {
+          alert("Доступ только для администратора!");
+          window.location.href = "../../main.html";
+          return;
+        }
+
+        // Получаем gameId из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameId = urlParams.get('game');
+        if (!gameId) {
+          appendAlert("Не указан gameId!", "danger");
+          return;
+        }
+
+        // Получаем данные игры (для code)
+        const gameSnap = await get(ref(db, `apps/chgk/games/${gameId}`));
+        const gameData = gameSnap.exists() ? gameSnap.val() : {};
+        const gameCode = gameData.code || gameId;
+
+        // Получаем туры
+        const toursSnap = await get(ref(db, `apps/chgk/games/${gameId}/tours`));
+        const tours = toursSnap.exists() ? toursSnap.val() : {};
+        const tourIds = Object.keys(tours);
+
+        // Получаем игроков
+        let playersCount = 0;
+        try {
+          const playersSnap = await get(ref(db, `apps/chgk/games/${gameId}/players`));
+          if (playersSnap.exists()) {
+            const players = playersSnap.val();
+            playersCount = Object.keys(players).length;
+          }
+        } catch {}
+
+        // --- Презентация ---
+        const presentationContainer = document.getElementById('presentationContainer');
+        let slides = [];
+        let currentSlide = 0;
+        let audio = null;
+
+        // 1. Первый слайд: таймер до начала игры
+        let startTime = null;
+        for (const tid of tourIds) {
+          if (tours[tid]?.startTime) {
+            startTime = tours[tid].startTime;
+            break;
+          }
+        }
+        slides.push({
+          type: "timer",
+          title: "До начала игры",
+          startTime: startTime,
+        });
+
+        // 2. Слайды с инфо об игре (название, описание, правила)
+        const gameName = tours[tourIds[0]]?.gameName || "Игра ЧГК";
+        const gameDesc = tours[tourIds[0]]?.gameDesc || "";
+        slides.push({
+          type: "info",
+          title: gameName,
+          desc: gameDesc,
+        });
+        if (tours[tourIds[0]]?.rules) {
+          slides.push({
+            type: "info",
+            title: "Правила игры",
+            desc: tours[tourIds[0]].rules,
+          });
+        }
+
+        // 3. Слайды по каждому туру и вопросу
+        tourIds.forEach((tid, tIdx) => {
+          const tour = tours[tid];
+          const questions = Array.isArray(tour?.questions) ? tour.questions : [];
+          slides.push({
+            type: "tourInfo",
+            title: `Тур ${tIdx + 1}: ${tour.name || tid}`,
+            desc: tour.desc || "",
+          });
+          questions.forEach((q, qIdx) => {
+            slides.push({
+              type: "question",
+              tourIdx: tIdx,
+              tourName: tour.name || tid,
+              questionIdx: qIdx,
+              question: q.question || "",
+              image: q.image || "",
+              total: questions.length,
+            });
+          });
+        });
+
+        // Фоновая музыка
+        let musicUrl = tours[tourIds[0]]?.music || ""; // если есть ссылка на музыку
+        if (!musicUrl) {
+          // Можно задать дефолтную музыку
+          musicUrl = "https://cdn.pixabay.com/audio/2022/10/16/audio_12b6fae5b2.mp3";
+        }
+        audio = document.createElement('audio');
+        audio.src = musicUrl;
+        audio.loop = true;
+        audio.volume = 0.3;
+        audio.autoplay = true;
+        audio.style.display = "none";
+        document.body.appendChild(audio);
+
+        // Футер
+        document.getElementById('footerGameId').textContent = `Код для входа: ${gameCode}`;
+        document.getElementById('footerPlayers').textContent = `Игроков: ${playersCount}`;
+        function updateFooterSlide() {
+          document.getElementById('footerSlide').textContent = `${currentSlide + 1} / ${slides.length}`;
+        }
+
+        // Рендер презентации
+        function renderSlide() {
+          const slide = slides[currentSlide];
+          let html = "";
+
+            if (slide.type === "timer") {
+            // Первый слайд: стиль как на картинке, но с вашими цветами
+            const gameTitle = gameData.Name || tours[tourIds[0]]?.gameName || "Игра";
+
+            // Формируем слайды для карусели
+            const carouselSlides = [
+              {
+                img: `<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" class="d-block mx-auto mb-2" alt="Google" style="height:60px;">`,
+                title: "ВНИМАНИЕ!",
+                text: 'Во время ответов пользоваться поиском и ИИ <span class="text-danger fw-bold">СТРОГО ЗАПРЕЩАЕТСЯ</span>'
+              },
+              {
+                title: "Честная игра!",
+                text: "При выявлении жульничества вопрос оценивается в 0 баллов."
+              },
+              {
+                title: "Не используйте телефоны!",
+                text: "Во время тура телефоны должны быть убраны."
+              },
+              {
+                title: "Удачи!",
+                text: "Пусть победит сильнейший!"
+              }
+            ];
+
+            let carouselInner = '';
+            carouselSlides.forEach((slide, idx) => {
+              carouselInner += `
+                <div class="carousel-item d-flex flex-column align-items-center justify-content-center h-100${idx === 0 ? ' active' : ''}">
+                  ${slide.img || ''}
+                  <div class="fw-bold fs-3 mt-2">${slide.title}</div>
+                  <div class="fs-5 text-center">${slide.text}</div>
+                </div>
+              `;
+            });
+
+            let startTimeStr = "";
+            let startDateStr = "";
+            if (slide.startTime) {
+              const startDate = new Date(slide.startTime);
+              startTimeStr = startDate.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+              startDateStr = startDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            html += `
+              <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="background:#e3f6fc;min-height:100vh;position:relative;overflow:auto;">
+              <div class="container-fluid">
+                <div class="row g-0">
+                <div class="col-12 text-center mb-3">
+                  <div class="fw-bold" style="font-size:3rem;letter-spacing:2px;">${gameTitle}</div>
+                  ${startTimeStr ? `<div class="fs-4 text-secondary mt-2">Начало: ${startTimeStr}</div>` : ""}
+                </div>
+                </div>
+                <div class="row g-0 justify-content-center align-items-stretch flex-wrap">
+                  <div class="col-md-8 col-12 d-flex justify-content-center align-items-stretch mb-4 mb-md-0" style="min-height:260px;">
+                    <div id="carouselWarning" class="carousel slide w-100" data-bs-ride="carousel" data-bs-interval="4000" style="max-width:600px;">
+                      <div class="carousel-inner" style="height:260px;">
+                        ${carouselInner}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-12 d-flex flex-column align-items-end justify-content-center mt-4 mt-md-0" style="min-width:320px;">
+                    <div class="bg-white rounded-4 shadow-sm p-3 w-100" style="max-width:320px;">
+                      <div class="fw-bold fs-5 mb-1">Сейчас</div>
+                      <div id="currentTime" class="display-6 fw-bold mb-1"></div>
+                      <div id="currentDate" class="fs-5 mb-3"></div>
+                      <hr class="my-2">
+                      <div class="fw-bold fs-5 mb-1">Игра</div>
+                      <div class="fw-bold" style="font-size:1.3rem;">${gameTitle}</div>
+                      ${startDateStr ? `<div class="fs-6 text-secondary mt-2">Дата начала: <span class="fw-bold">${startDateStr}</span></div>` : ""}
+                      ${startTimeStr ? `<div class="fs-6 text-secondary">Время начала: <span class="fw-bold">${startTimeStr}</span></div>` : ""}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="position-absolute bottom-0 start-0 w-100 py-2" style="background:#222;color:#fff;font-size:2rem;text-align:center;z-index:2;">
+                Ожидайте, скоро начнётся…
+                ${startDateStr ? `<div class="fs-5 mt-2" style="color:#fff;">Дата начала игры: <span class="fw-bold">${startDateStr}</span></div>` : ""}
+              </div>
+              </div>
+            `;
+            }
+           else if (slide.type === "question") {
+            // Вопрос: стиль как на картинке
+            html += `
+              <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="min-height:60vh;">
+                <div class="d-flex w-100 justify-content-between align-items-start mb-3" style="max-width:1100px;">
+                  <div></div>
+                  <div class="fs-1 fw-bold text-center flex-grow-1" style="font-family: 'Montserrat', Arial, sans-serif;">
+                    ${slide.question}
+                  </div>
+                  <div style="width:80px;">
+                    <!-- Таймер, если нужен -->
+                    ${slide.timer ? `<div class="border rounded-3 p-2 text-center fs-4" id="timerValue">${slide.timer}</div>` : ""}
+                  </div>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center w-100" style="min-height:40vh;">
+                  ${slide.image ? `
+                    <img src="${slide.image}" alt="Вопрос" class="mb-3" style="max-width:700px;max-height:400px;">
+                  ` : `
+                    <div class="fs-2 fw-bold text-center" style="min-height:200px;display:flex;align-items:center;justify-content:center;"></div>
+                  `}
+                </div>
+                <div class="position-absolute bottom-0 end-0 m-4" style="font-size:2.5rem;font-weight:700;border:2px dashed #bbb;border-radius:8px;padding:0.2em 0.8em;background:#fff8;">
+                  ${slide.questionIdx + 1}
+                </div>
+              </div>
+            `;
+          } else {
+            html += `
+              <div class="d-flex flex-column align-items-center justify-content-center w-100 h-100" style="min-height:60vh;">
+            `;
+            if (slide.type === "timer") {
+              html += `
+                <div class="card shadow text-center p-4" style="max-width:600px;">
+                  <h2 class="mb-3">${slide.title}</h2>
+                  <div id="timerValue" class="display-3 fw-bold mb-2"></div>
+                  <div class="text-secondary">Ожидайте начала игры</div>
+                </div>
+              `;
+            } else if (slide.type === "info") {
+              html += `
+                <div class="card shadow text-center p-4" style="max-width:600px;">
+                  <h2 class="mb-3">${slide.title}</h2>
+                  <div class="fs-4">${slide.desc || ""}</div>
+                </div>
+              `;
+            } else if (slide.type === "tourInfo") {
+              html += `
+                <div class="card shadow text-center p-4" style="max-width:600px;">
+                  <h2 class="mb-3">${slide.title}</h2>
+                  <div class="fs-5">${slide.desc || ""}</div>
+                </div>
+              `;
+            }
+            html += `</div>`;
+          }
+          presentationContainer.innerHTML = html;
+
+          // Инициализация Bootstrap Carousel для динамического контента
+          if (slide.type === "timer") {
+            const carouselEl = document.getElementById('carouselWarning');
+            if (carouselEl) {
+              // eslint-disable-next-line no-undef
+              new bootstrap.Carousel(carouselEl, {
+                interval: 4000,
+                ride: 'carousel',
+                pause: false,
+                wrap: true
+              });
+            }
+          }
+
+          // Таймер для времени на первом слайде
+          if (slide.type === "timer") {
+            function updateTime() {
+              const now = new Date();
+              const currentTimeEl = document.getElementById('currentTime');
+              const currentDateEl = document.getElementById('currentDate');
+              const currentDayEl = document.getElementById('currentDay');
+              if (currentTimeEl) currentTimeEl.textContent = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+              if (currentDateEl) currentDateEl.textContent = now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+              if (currentDayEl) currentDayEl.textContent = now.toLocaleDateString('ru-RU', { weekday: 'long' });
+              setTimeout(updateTime, 1000);
+            }
+            updateTime();
+          }
+
+          // Таймер
+          if (slide.type === "timer" && slide.startTime) {
+            const timerValue = document.getElementById('timerValue');
+            function updateTimer() {
+              const now = Date.now();
+              let diff = new Date(slide.startTime).getTime() - now;
+              if (diff < 0) diff = 0;
+              const h = Math.floor(diff / 3600000);
+              const m = Math.floor((diff % 3600000) / 60000);
+              const s = Math.floor((diff % 60000) / 1000);
+              timerValue.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+              if (diff > 0) setTimeout(updateTimer, 1000);
+            }
+            updateTimer();
+          } else if (slide.type === "question" && slide.timer) {
+            const timerValue = document.getElementById('timerValue');
+            let time = slide.timer;
+            function updateTimer() {
+              timerValue.textContent = time;
+              if (time > 0) {
+                setTimeout(() => {
+                  time--;
+                  updateTimer();
+                }, 1000);
+              }
+            }
+            updateTimer();
+          }
+          updateFooterSlide();
+        }
+
+        // Кнопки
+        document.getElementById('prevBtn').onclick = () => {
+          if (currentSlide > 0) {
+            currentSlide--;
+            renderSlide();
+          }
+        };
+        document.getElementById('nextBtn').onclick = () => {
+          if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            renderSlide();
+          }
+        };
+        document.getElementById('exitBtn').onclick = () => {
+          window.location.href = "../../main.html";
+        };
+        document.getElementById('volumeSlider').oninput = (e) => {
+          audio.volume = e.target.value;
+        };
+
+        renderSlide();
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

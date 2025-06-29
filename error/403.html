@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ARTEnet | Страница не найдена</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        min-height: 100vh;
+        background: 
+          linear-gradient(135deg, #e9ecef 0%, #f8fafc 100%),
+          url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+        display: flex;
+        flex-direction: column;
+      }
+      .error-404-container {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        position: relative;
+        z-index: 2;
+      }
+      .error-404-title {
+        font-size: 7rem;
+        font-weight: bold;
+        color: hsl(270, 70%, 54%);
+        letter-spacing: 0.1em;
+        line-height: 1;
+        text-shadow: 0 4px 24px #fff, 0 2px 8px #dc3545a0;
+      }
+      .sad-face {
+        font-size: 4rem;
+        color: hsl(270, 70%, 54%);
+        margin-bottom: 1.5rem;
+        line-height: 1;
+        user-select: none;
+      }
+      .btn-home {
+        font-size: 1.2rem;
+        padding: 0.75rem 2.5rem;
+      }
+      .error-bg-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: rgba(255,255,255,0.7);
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-bg-overlay"></div>
+    <nav class="navbar navbar-light bg-body-tertiary border-bottom" style="z-index:2;">
+      <div class="container d-flex justify-content-center">
+        <a class="navbar-brand mx-auto" href="../main.html">
+          <img src="../photos/logo-color-2.png" alt="ARTEnet" height="36" class="d-inline-block align-text-top">
+        </a>
+      </div>
+    </nav>
+    <div class="error-404-container text-center">
+      <div class="error-404-title mb-2">403</div>
+      <div class="sad-face mb-4">( ˘︹˘ )</div>
+      <h1 class="display-5 fw-bold mb-3">Страница не найдена</h1>
+      <p class="lead mb-4">Упс! Такой страницы не существует или она была удалена.<br>Проверьте адрес или вернитесь на главную.</p>
+      <a href="main.html" class="btn btn-primary btn-home shadow">На главную</a>
+    </div>
+    <footer class="bg-body-tertiary text-center text-lg-start mt-auto border-top" style="z-index:2;">
+      <div class="container p-3">
+        <span class="fw-bold">ARTEnet &copy; 2025</span>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ARTEnet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+      .bd-mode-toggle .dropdown-menu .active .bi {
+        display: block !important;
+      }
+
+
+            html,
+      body {
+        height: 100%;
+      }
+
+      .form-signin {
+        max-width: 500px;
+        padding: 1rem;
+      }
+
+      .form-signin .form-floating:focus-within {
+        z-index: 2;
+      }
+
+      .form-signin input {
+        margin-bottom: 0px;
+      }
+
+      .black{
+        color:rgba(0, 0, 0, 0.803);
+        background-color: rgba(97, 97, 97, 0.325);
+        border-radius: 10px;
+      }
+
+      .carousel-item
+      {
+        height: 18rem;
+      }
+
+      /*
+      .form-signin input[type="password"] {
+        margin-bottom: 0px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }*/
+      /*
+      .themed-grid-col {
+        padding-top: .75rem;
+        padding-bottom: .75rem;
+        margin-top: 2.5rem;
+        background-color: rgba(112.520718, 44.062154, 249.437846, .15);
+        border: 1px solid rgba(112.520718, 44.062154, 249.437846, .3);
+      }
+
+      .themed-container {
+        padding: .75rem;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+        background-color: rgba(112.520718, 44.062154, 249.437846, .15);
+        border: 1px solid rgba(112.520718, 44.062154, 249.437846, .3);
+      }*/
+      .skeleton-card {
+        width: 20rem !important;
+        min-height: 350px;
+        max-height: 350px;
+        display: flex;
+        flex-direction: column;
+      }
+      .skeleton-card .card-img-top,
+      .skeleton-card svg {
+        height: 180px;
+        object-fit: cover;
+      }
+
+      .star-rating { font-size: 1.7rem; color: #ffd700; cursor: pointer; }
+.star-rating .star { color: #ccc; }
+.star-rating .star.selected { color: #ffd700; }
+    </style>
+  </head>
+
+  <body class="p-3 m-0 border-0 bd-example m-0 border-0">
+
+
+    <div class="modal fade" id="blockedModal" tabindex="-1" aria-labelledby="blockedModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header border-0">
+            <h5 class="modal-title w-100" id="blockedModalLabel">Доступ заблокирован</h5>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <span class="text-danger" style="font-size:2.5rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
+                  <path d="M11.46.146a1.5 1.5 0 0 0-1.92 0l-7.394 6.36A1.5 1.5 0 0 0 1 8.5v7A1.5 1.5 0 0 0 2.5 17h11a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-.146-.854l-7.394-6.36zM8 4.293l3.646 3.647-1.415 1.415L8 7.121l-2.232 2.234-1.415-1.415L8 4.293z"/>
+                </svg>
+              </span>
+            </div>
+            <div>Ваш аккаунт заблокирован.<br>Вход невозможен.</div>
+          </div>
+          <div class="modal-footer border-0 flex-column">
+            <button id="blockedBackBtn" class="btn btn-danger w-100 mb-2">Вернуться к входу</button>
+            <div class="progress w-100" style="height: 4px;">
+              <div id="blockedProgress" class="progress-bar bg-danger" role="progressbar" style="width: 100%; transition: width 10s linear;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модалка-приглашение заполнить анкету -->
+    <div class="modal fade" id="feedbackInviteModal" tabindex="-1" aria-labelledby="feedbackInviteModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header border-0">
+            <h5 class="modal-title w-100" id="feedbackInviteModalLabel">Помогите нам стать лучше!</h5>
+          </div>
+          <div class="modal-body">
+            <svg width="64" height="64" fill="none" viewBox="0 0 64 64">
+              <circle cx="32" cy="32" r="32" fill="#e9ecef"/>
+              <path d="M32 18a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 10c-5.523 0-10 4.03-10 9v1a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-1c0-4.97-4.477-9-10-9z" fill="#0d6efd"/>
+            </svg>
+            <p class="mt-3 mb-0 fs-5">Пожалуйста, уделите минуту и заполните анкету обратной связи.<br>Это поможет нам сделать сервис лучше!</p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-primary btn-lg w-100" id="openFeedbackFormBtn">Заполнить анкету</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+      <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="main.html">
+            <img src="photos/logo-color-2.png" alt="ARTEnet" height="30" class="d-inline-block align-text-top">
+          </a>
+
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="main.html">Главное</a>
+              </li><!--
+              <li class="nav-item">
+                <a class="nav-link" href="#">Добавить приложение</a>
+              </li>-->
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="account.html">Аккаунт</a>
+              </li>
+            </ul>
+            <small>
+              <em>
+                <span class="navbar-text m-2" id="user-id">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                </span>
+              </em>
+            </small>
+            <form class="d-flex" id="logout-form">
+              <button class="btn btn-outline-success" type="submit">Выйти из аккаунта</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+
+
+            <!-- Модальное окно для реферала -->
+      <div class="modal fade" id="refModal" tabindex="-1" aria-labelledby="refModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="refModalLabel">Хотите добавить приложение?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body text-center" id="refModalBody">
+              <!-- Данные приложения будут подставлены JS -->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="refAddBtnClose" data-bs-dismiss="modal">Отмена</button>
+              <button type="button" class="btn btn-primary" id="refAddBtn">Добавить приложение</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="2"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <svg aria-label="1" class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" height="18rem" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg">
+              <title>1 слайд</title>
+              <rect width="100%" height="100%" fill="#777"></rect>
+              <text x="50%" y="15%" fill="#cfcfcf" text-anchor="middle" font-style="italic" class="h4">
+                <tspan x="50%" dy="1.2em">„Осуждение другого всегда</tspan>
+                <tspan x="50%" dy="1.2em">неверно, потому что никто </tspan>
+                <tspan x="50%" dy="1.2em">никогда не может знать того,</tspan>
+                <tspan x="50%" dy="1.2em">что происходило и происходит</tspan>
+                <tspan x="50%" dy="1.2em">в душе того, кого осуждаешь.“</tspan>  
+                <tspan x="50%" dy="2em" fill="#aaddaa" font-size="20">
+                  Лев Толстой
+                </tspan>
+              </text>
+            </svg>
+          </div>
+          <div class="carousel-item">
+            <svg aria-label="2" class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" height="18rem" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg">
+              <title>2 слайд</title>
+              <rect width="100%" height="100%" fill="#777"></rect>
+              <text x="50%" y="15%" fill="#cfcfcf" text-anchor="middle" font-style="italic" class="h4">
+                <tspan x="50%" dy="1.2em">Когда закрывается одна дверь </tspan>
+                <tspan x="50%" dy="1.2em">к счастью, тут же открывается </tspan>
+                <tspan x="50%" dy="1.2em">другая. Но мы часто так долго </tspan>
+                <tspan x="50%" dy="1.2em">смотрим на первую, что не</tspan>
+                <tspan x="50%" dy="1.2em">замечаем вторую.“</tspan>
+                <tspan x="50%" dy="2em" fill="#aaddaa" font-size="20">
+                  Элен Келлер
+                </tspan>
+              </text>
+            </svg>
+          </div>
+          <div class="carousel-item">
+            <svg aria-label="3" class="bd-placeholder-img bd-placeholder-img-lg d-block w-100" height="18rem" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg">
+              <title>3 слайд</title>
+              <rect width="100%" height="100%" fill="#777"></rect>
+              <text x="50%" y="25%" fill="#cfcfcf" text-anchor="middle" font-style="italic" class="h4">
+                <tspan x="50%" dy="1.2em">„Самый верный признак истины — </tspan>
+                <tspan x="50%" dy="1.2em">простота и ясность. Ложь всегда</tspan>
+                <tspan x="50%" dy="1.2em">сложна, вычурна и многословна.“</tspan> 
+                <tspan x="50%" dy="2em" fill="#aaddaa" font-size="20">
+                  Лев Толстой
+                </tspan>
+              </text>
+            </svg>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Предыдущее</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Следующее</span>
+        </button>
+      </div>
+
+      <div id="liveAlertPlaceholder" role="alert"></div>
+
+    <h2 class="mb-3 mt-2">
+      Ваши приложения
+    </h2>
+
+    <div class="container d-flex justify-content-center align-items-center">
+      <div class="row text-center justify-content-center" id="app-list">
+        <!-- Сюда JS добавит карточки пользователя -->
+        <div class="card col-lg-4 m-1 skeleton-card" aria-hidden="true">
+          <svg aria-label="1" class="bd-placeholder-img bd-placeholder-img-lg d-block w-100 card-img-top" preserveAspectRatio="xMidYMid slice" role="img" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="#777"></rect>
+          </svg>
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-6"></span>
+            </h5>
+            <p class="card-text placeholder-glow">
+              <span class="placeholder col-7"></span>
+              <span class="placeholder col-4"></span>
+              <span class="placeholder col-4"></span>
+              <span class="placeholder col-6"></span>
+              <span class="placeholder col-8"></span>
+            </p>
+            <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+          </div>
+        </div>
+
+        <div class="card col-lg-4 m-1 skeleton-card" aria-hidden="true">
+          <svg aria-label="1" class="bd-placeholder-img bd-placeholder-img-lg d-block w-100 card-img-top" preserveAspectRatio="xMidYMid slice" role="img" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100%" height="100%" fill="#777"></rect>
+          </svg>
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-6"></span>
+            </h5>
+            <p class="card-text placeholder-glow">
+              <span class="placeholder col-7"></span>
+              <span class="placeholder col-4"></span>
+              <span class="placeholder col-4"></span>
+              <span class="placeholder col-6"></span>
+              <span class="placeholder col-8"></span>
+            </p>
+            <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+    <footer class="bg-body-tertiary text-center text-lg-start mt-4 border-top">
+      <div class="container p-3">
+        <div class="row align-items-center">
+          <div class="col-lg-6 text-lg-start text-center mb-2 mb-lg-0">
+            <span class="fw-bold">ARTEnet &copy; 2025</span>
+          </div>
+          <div class="col-lg-6 text-lg-end text-center">
+            <a href="mailto:ltartenet@gmail.com" class="text-decoration-none text-secondary me-3">Поддержка</a>
+            <a href="#" class="text-decoration-none text-secondary disabled">Политика конфиденциальности</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!--    FIREBASE    -->
+        
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+      import { getAuth, reload, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+      import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+      
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+        authDomain: "artenetshop-7b884.firebaseapp.com",
+        projectId: "artenetshop-7b884",
+        storageBucket: "artenetshop-7b884.appspot.com",
+        messagingSenderId: "542098227452",
+        appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+        measurementId: "G-8PDLBR77YN",
+        databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const analytics = getAnalytics(app);
+      const user = sessionStorage.getItem('isLoggedIn');
+      const db = getDatabase(app);
+
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+
+      const appendAlert = (message, type) => {
+        // Удалим лишние алерты, если их больше двух
+        while (alertPlaceholder.children.length >= 2) {
+          alertPlaceholder.removeChild(alertPlaceholder.firstChild);
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = `alert alert-${type} alert-dismissible fade show`;
+        wrapper.role = 'alert';
+        wrapper.innerHTML = `
+          <div>${message}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        alertPlaceholder.append(wrapper);
+
+        // Удаление алерта через 10 секунд
+        setTimeout(() => {
+          wrapper.classList.remove("show"); // плавное исчезновение
+          setTimeout(() => wrapper.remove(), 150); // удаление из DOM
+        }, 10000);
+      };
+
+            // --- 2. Отображение приложений пользователя ---
+      onAuthStateChanged(auth, async (user) => {
+        const appList = document.getElementById("app-list");
+
+        if (!user || !user.emailVerified) {
+          window.location.href = "index.html";
+          return;
+        }
+
+        // Проверка блокировки пользователя
+        const userDbRef = ref(db, `users/${user.uid}`);
+        const userDbSnap = await get(userDbRef);
+        const userData = userDbSnap.exists() ? userDbSnap.val() : {};
+        const name = userData.username || "";
+        const email = user.email || "";
+        document.getElementById('user-id').textContent = name
+          ? `${name} (${email})`
+          : email;
+
+        if (userDbSnap.exists() && userDbSnap.val().blocked) {
+          const blockedModalEl = document.getElementById('blockedModal');
+          const blockedModal = new bootstrap.Modal(blockedModalEl, { backdrop: 'static', keyboard: false });
+          const progressBar = document.getElementById('blockedProgress');
+          let timer;
+
+          // Убедитесь, что цвет всегда danger
+          progressBar.classList.remove("bg-secondary", "bg-success", "bg-warning");
+          progressBar.classList.add("bg-danger");
+
+          // Сброс transition и ширины
+          progressBar.style.transition = "none";
+          progressBar.style.width = "100%";
+          setTimeout(() => {
+            progressBar.style.transition = "width 10s linear";
+            progressBar.style.width = "0%";
+          }, 50);
+
+          // Кнопка возврата
+          document.getElementById("blockedBackBtn").onclick = async () => {
+            clearTimeout(timer);
+            blockedModal.hide();
+            await signOut(auth);
+            window.location.href = "index.html";
+          };
+
+          // Автоматический возврат через 10 секунд
+          timer = setTimeout(async () => {
+            blockedModal.hide();
+            await signOut(auth);
+            window.location.href = "index.html";
+          }, 10000);
+
+          blockedModal.show();
+          return;
+        }
+
+          // --- Добавляем кнопку "Администрировать" для админов ---
+          const navbar = document.getElementById('navbarNav');
+          const adminBtnId = 'admin-nav-btn';
+
+          // Проверяем isAdmin в базе
+          const userInfoRef = ref(db, `users/${user.uid}/isAdmin`);
+          const userInfoSnap = await get(userInfoRef);
+          if (userInfoSnap.exists() && userInfoSnap.val() === true) {
+            // Если кнопки ещё нет, добавляем
+            if (!document.getElementById(adminBtnId)) {
+              const ul = navbar.querySelector('.navbar-nav');
+              const li = document.createElement('li');
+              li.className = 'nav-item';
+              li.id = adminBtnId;
+              li.innerHTML = `<a class="nav-link fw-bold" href="admin.html">Администрировать</a>`;
+              ul.prepend(li);
+            }
+          } else {
+            // Если кнопка есть, но пользователь не админ — убираем
+            const adminBtn = document.getElementById(adminBtnId);
+            if (adminBtn) adminBtn.remove();
+          }
+
+          // Удаляем все скелетоны перед добавлением настоящих карточек
+          appList.innerHTML = "";
+
+          const userAppsRef = ref(db, `users/${user.uid}/apps`);
+          const appsSnap = await get(userAppsRef);
+
+          if (appsSnap.exists()) {
+            const apps = appsSnap.val();
+            for (const appName in apps) {
+              // Проверяем, нет ли уже такой карточки
+              if (!document.getElementById(`${appName}-card`)) {
+                // Получаем данные приложения из ветки apps/{appName}
+                const appInfoRef = ref(db, `apps/${appName}`);
+                const appInfoSnap = await get(appInfoRef);
+
+                if (appInfoSnap.exists()) {
+                  const appInfo = appInfoSnap.val();
+                  const card = document.createElement("div");
+                  card.className = "card col-lg-4 m-1";
+                  card.style.width = "20rem";
+                  card.id = `${appName}-card`;
+                  card.innerHTML = `
+                    <img src="${appInfo.image || 'photos/default.jpg'}" class="card-img-top" alt="card-photo">
+                    <div class="card-body">
+                      <h5 class="card-title">${appInfo.title || appName}</h5>
+                      <p class="card-text">${appInfo.description || ''}</p>
+                      <a href="${appInfo.url || '#'}" class="btn btn-primary container-fluid">Войти</a>
+                    </div>
+                  `;
+                  appList.appendChild(card);
+                }
+              }
+            }
+          }
+          // Вставляем карточку добавления приложения в конец
+          if (!document.getElementById("add-app-card")) {
+            const addCard = document.createElement("div");
+            addCard.className = "card col-lg-4 m-1";
+            addCard.style.width = "20rem";
+            addCard.id = "add-app-card";
+            addCard.innerHTML = `
+              <div class="card-body">
+                <h5 class="card-title">Добавление приложения</h5>
+                <svg xmlns="http://www.w3.org/2000/svg" width="60%" fill="currentColor" class="bi bi-window-plus" viewBox="0 0 16 16">
+                  <path d="M2.5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M4 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1m2-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+                  <path d="M0 4a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v4a.5.5 0 0 1-1 0V7H1v5a1 1 0 0 0 1 1h5.5a.5.5 0 0 1 0 1H2a2 2 0 0 1-2-2zm1 2h13V4a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>
+                  <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-3.5-2a.5.5 0 0 0-.5.5v1h-1a.5.5 0 0 0 0 1h1v1a.5.5 0 0 0 1 0v-1h1a.5.5 0 0 0 0-1h-1v-1a.5.5 0 0 0-.5-.5"/>
+                </svg>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Хотите добавить приложение?</h6>
+                <p class="card-text">Введите код привязки приложения к вашему аккаунту для добавления.</p>
+                <form autocomplete="off" id="code-form">
+                  <div class="input-group mb-2">
+                    <div class="input-group-text">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-key" viewBox="0 0 16 16">
+                        <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"></path>
+                        <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"></path>
+                      </svg>
+                    </div>
+                    <input name="keyCode" id="keyCode" type="number" class="form-control" placeholder="Код активации" aria-label="keyCode" autocomplete="off" aria-describedby="addon-wrapping">
+                    <button class="btn btn-primary py-2" id="keyCodeBtn" type="submit"> → </button>
+                  </div>
+                </form>
+              </div>
+            `;
+            appList.appendChild(addCard);
+                    
+            // Навешиваем обработчик после добавления формы в DOM!
+            document.getElementById("code-form").addEventListener("submit", async (e) => {
+              e.preventDefault();
+              const appInput = document.getElementById("keyCode");
+              const buttonApp = document.getElementById("keyCodeBtn");
+              const code = appInput.value.trim();
+
+              // Блокируем отправку пустого или пробельного кода
+              if (!code) {
+                appendAlert("Введите код активации!", "warning");
+                appInput.value = "";
+                appInput.focus();
+                return;
+              }
+
+              appInput.readOnly = true;
+              buttonApp.disabled = true;
+              buttonApp.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>`;
+
+              const user = auth.currentUser;
+              if (!user) {
+                appendAlert("Нет пользователя!", "danger");
+                return;
+              }
+
+              try {
+                // Проверяем код в базе
+                const codeRef = ref(db, `app-codes/${code}`);
+                const codeSnap = await get(codeRef);
+
+                if (!codeSnap.exists()) {
+                appendAlert("Код не найден!", "danger");
+                appInput.value = "";
+                } else {
+                  const appName = codeSnap.val(); // Короткое имя приложения (например, "chgk")
+
+                  // Получаем красивое название приложения из базы
+                  const appInfoRef = ref(db, `apps/${appName}/title`);
+                  const appInfoSnap = await get(appInfoRef);
+                  const appTitle = appInfoSnap.exists() ? appInfoSnap.val() : appName;
+
+                  // Проверяем, есть ли уже это приложение у пользователя
+                  const userAppRef = ref(db, `users/${user.uid}/apps/${appName}`);
+                  const userAppSnap = await get(userAppRef);
+
+                  if (userAppSnap.exists()) {
+                    appendAlert(`Приложение "${appTitle}" уже есть в вашем аккаунте!`, "info");
+                    appInput.value = "";
+                  } else {
+                    // 1. Удаляем код из базы
+                    await remove(codeRef);
+
+                    // 2. Добавляем приложение в профиль пользователя
+                    await set(userAppRef, true);
+
+                    // 3. Записываем время получения в apps/{appName}/userData/{uid}
+                    const now = new Date().toISOString();
+                    const userDataRef = ref(db, `apps/${appName}/userData/${user.uid}`);
+                    await set(userDataRef, { receivedAt: now });
+
+                    appendAlert(`Приложение "${appTitle}" добавлено!`, "success");
+                    setTimeout(() => location.reload(), 1000);
+                  }
+                }
+              } catch (err) {
+                appendAlert("Ошибка: " + err.message, "danger");
+              } finally {
+                appInput.readOnly = false;
+                buttonApp.disabled = false;
+                buttonApp.innerHTML = ` → `;
+            }
+            });
+          }
+        });
+      
+      
+
+      document.getElementById("logout-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        signOut(auth)
+          .then(() => {
+            window.location.href = "index.html";
+          })
+          .catch((error) => {
+            appendAlert("Ошибка выхода: " + error.message, "danger");
+          });
+      });
+
+      // --- Проверка реферального кода в URL ---
+      
+      // Получаем реферальный код из URL
+      function getRefCode() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('ref');
+      }
+
+      const refCode = getRefCode();
+      if (refCode) {
+        // Проверяем код в базе
+        const refCodeRef = ref(db, `ref-codes/${refCode}`);
+        const refCodeSnap = await get(refCodeRef);
+
+        if (!refCodeSnap.exists()) {
+          appendAlert("Реферальный код не найден!", "danger");
+        } else {
+          const refData = refCodeSnap.val();
+          const appName = refData.app;
+
+          // Получаем инфо о приложении (реферальный код)
+          const appInfoRef = ref(db, `apps/${appName}`);
+          const appInfoSnap = await get(appInfoRef);
+          const appInfo = appInfoSnap.exists() ? appInfoSnap.val() : {};
+
+          // Заполняем модалку (реферальный код)
+          document.getElementById("refModalLabel").textContent = "Добавление приложения";
+          document.getElementById("refModalBody").innerHTML = `
+            <img src="${appInfo.image || 'photos/default.jpg'}" class="mb-3" style="max-width:120px;">
+            <h5>${appInfo.title || appName}</h5>
+            <p>${appInfo.description || ''}</p>
+          `;
+
+          // Открываем модалку (реферальный код)
+          const refModal = new bootstrap.Modal(document.getElementById('refModal'), { backdrop: 'static', keyboard: false });
+          refModal.show();
+
+          // Кнопка "Добавить приложение" (реферальный код)
+          document.getElementById("refAddBtn").onclick = async () => {
+            // Проверяем авторизацию
+            if (!auth.currentUser) {
+              appendAlert("Пожалуйста, войдите в аккаунт для добавления приложения.", "warning");
+
+              document.getElementById("refModalLabel").textContent = "Войдите в аккаунт";
+              document.getElementById("refAddBtn").style.display = "none";
+              document.getElementById("refAddBtnClose").style.display = "none";
+              document.getElementById("refModalBody").innerHTML = `
+                <img src="${appInfo.image || 'photos/default.jpg'}" class="mb-3" style="max-width:120px;">
+                <h5>${appInfo.title || appName}</h5>
+                <p>${appInfo.description || ''}</p>
+                <h5>Войдите в акквунт для продолжения</h5>
+              `;
+
+              return;
+            }
+            const user = auth.currentUser;
+
+            // Проверяем, не добавлял ли уже пользователь это приложение по этому рефкоду
+            const usedRef = ref(db, `ref-codes/${refCode}/used/${user.uid}`);
+            const usedSnap = await get(usedRef);
+            if (usedSnap.exists()) {
+              appendAlert("Вы уже использовали этот реферальный код.", "info");
+              return;
+            }
+
+            // Проверяем лимит использований
+            const usedAllRef = ref(db, `ref-codes/${refCode}/used`);
+            const usedAllSnap = await get(usedAllRef);
+            const usedCount = usedAllSnap.exists() ? Object.keys(usedAllSnap.val()).length : 0;
+            const maxUses = refData.maxUses || Infinity;
+
+            if (usedCount >= maxUses) {
+              appendAlert("Этот реферальный код уже использован максимальное число раз.", "warning");
+              return;
+            }
+
+            // Добавляем приложение пользователю
+            const userAppRef = ref(db, `users/${user.uid}/apps/${appName}`);
+            await set(userAppRef, true);
+
+            // Записываем время получения в apps/{appName}/userData/{uid}
+            const now = new Date().toISOString();
+            const userDataRef = ref(db, `apps/${appName}/userData/${user.uid}`);
+            await set(userDataRef, { receivedAt: now });
+
+            // Записываем использование рефкода
+            await set(usedRef, new Date().toISOString());
+
+            appendAlert(`Приложение "${appInfo.title || appName}" добавлено!`, "success");
+            refModal.hide();
+            window.location.href = "main.html";
+          };
+        }
+      }
+
+      // Модальное окно для заблокированных аккаунтов
+      const blockedModal = new bootstrap.Modal(document.getElementById('blockedModal'), { backdrop: 'static', keyboard: false });
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const userDbRef = ref(db, `users/${user.uid}`);
+          const userDbSnap = await get(userDbRef);
+
+          if (userDbSnap.exists() && userDbSnap.val().blocked) {
+            // Если аккаунт заблокирован — показываем модалку
+            blockedModal.show();
+          } else {
+            // Если аккаунт разблокирован — скрываем модалку (на всякий случай)
+            blockedModal.hide();
+          }
+        }
+      });
+
+      document.getElementById("blockedBackBtn").addEventListener("click", () => {
+        // При нажатии на кнопку "Вернуться к входу" модалка просто закрывается
+        blockedModal.hide();
+        // И можно, например, перейти на страницу входа
+        window.location.href = "index.html";
+      });
+
+      function showFeedbackModalIfNeeded(user) {
+        const last = localStorage.getItem("feedbackLastDate");
+        const now = Date.now();
+        if (!last || now - Number(last) > 6.5*24*60*60*1000) { // раз в 6.5 дней
+          setTimeout(() => {
+            // Проверяем, открыта ли хоть одна модалка
+            if (document.querySelector('.modal.show')) return;
+            const inviteModal = new bootstrap.Modal(document.getElementById('feedbackInviteModal'));
+            inviteModal.show();
+            document.getElementById('openFeedbackFormBtn').onclick = () => {
+              inviteModal.hide();
+              setTimeout(() => {
+                new bootstrap.Modal(document.getElementById('feedbackModal')).show();
+              }, 350); // чтобы не было наложения fade
+            };
+          }, 2000);
+        }
+      }
+      onAuthStateChanged(auth, user => {
+        if (user) showFeedbackModalIfNeeded(user);
+      });
+
+      // Звёздочки
+      function renderStars(div, value) {
+        div.innerHTML = "";
+        for (let i = 1; i <= 5; i++) {
+          const star = document.createElement("span");
+          star.className = "star" + (i <= value ? " selected" : "");
+          star.innerHTML = "&#9733;";
+          star.onclick = () => {
+            renderStars(div, i);
+            div.dataset.value = i;
+          };
+          div.appendChild(star);
+        }
+      }
+      document.querySelectorAll('.star-rating').forEach(div => renderStars(div, 0));
+
+// Отправка формы
+document.getElementById('feedbackForm').onsubmit = async function(e) {
+  e.preventDefault();
+  const user = auth.currentUser;
+  if (!user) {
+    appendAlert("Ошибка: пользователь не найден!", "danger");
+    return;
+  }
+
+  // Собираем ответы динамически
+  const data = {
+    uid: user.uid,
+    username: user.displayName || "",
+    date: new Date().toISOString()
+  };
+  let valid = true;
+
+  questions.forEach((q, i) => {
+    const key = `q${i+1}`;
+    if (q.type === "stars") {
+      const val = Number(document.querySelector(`.star-rating[data-q="${key}"]`).dataset.value || 0);
+      data[key] = val;
+      if (!val) valid = false;
+    } else if (q.type === "text") {
+      data[key] = document.querySelector(`[name="${key}"]`).value.trim();
+      // текст не обязателен
+    } else if (q.type === "select") {
+      const val = document.querySelector(`[name="${key}"]`).value;
+      data[key] = val;
+      if (!val) valid = false;
+    }
+  });
+
+  if (!valid) {
+    appendAlert("Пожалуйста, заполните все обязательные поля!", "warning");
+    return;
+  }
+
+  await set(ref(db, `feedback/${user.uid + "_" + Date.now()}`), data);
+  localStorage.setItem("feedbackLastDate", Date.now());
+  bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
+  appendAlert("Спасибо за ваш отзыв!", "success");
+};
+
+const qSnap = await get(ref(db, "feedbackQuestions"));
+const questions = qSnap.exists() ? qSnap.val() : [];
+let formHtml = "";
+questions.forEach((q, i) => {
+  if (q.type === "stars") {
+    formHtml += `<div class="mb-3">${i+1}. ${q.text}<br><div class="star-rating" data-q="q${i+1}"></div></div>`;
+  } else if (q.type === "text") {
+    formHtml += `<div class="mb-3">${i+1}. ${q.text}<br><textarea class="form-control" name="q${i+1}" rows="2" maxlength="500"></textarea></div>`;
+  } else if (q.type === "select") {
+    formHtml += `<div class="mb-3">${i+1}. ${q.text}<br>
+      <select class="form-select" name="q${i+1}" required>
+        <option value="">Выберите...</option>
+        ${q.options.map(opt=>`<option value="${opt}">${opt}</option>`).join("")}
+      </select>
+    </div>`;
+  }
+});
+document.getElementById('feedbackFormBody').innerHTML = formHtml;
+
+// <-- ВАЖНО: только теперь инициализируем звёздочки!
+document.querySelectorAll('.star-rating').forEach(div => renderStars(div, 0));
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <script type="module" src="/js/autologout.js"></script>
+
+    <!-- Модалка обратной связи -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form class="modal-content" id="feedbackForm">
+      <div class="modal-header">
+        <h5 class="modal-title" id="feedbackModalLabel">Анкета обратной связи</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body" id="feedbackFormBody">
+        <!-- Вопросы будут подставлены JS -->
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success w-100">Отправить</button>
+      </div>
+    </form>
+  </div>
+</div>

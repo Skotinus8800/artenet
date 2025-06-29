@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ЧГК | Аппеляции</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html, body { height: 100%; min-height: 100vh; }
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    main { flex: 1 0 auto; padding-top: 56px; }
+    footer { flex-shrink: 0; }
+    #liveAlertPlaceholder {
+      position: fixed; top: 70px; left: 0; right: 0; z-index: 2000; width: 100%; max-width: 500px;
+      margin: 0 auto; pointer-events: none; display: flex; flex-direction: column; align-items: center;
+    }
+    #liveAlertPlaceholder .alert { pointer-events: auto; margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100 p-0 m-0 border-0 bd-example">
+  <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="game-mode.html">
+        <img src="../../photos/logo-color-2.png" alt="ARTEnet" height="30" class="d-inline-block align-text-top">
+        <img src="../../photos/chgk-logo.jpg" alt="ЧГК" height="30" class="d-inline-block align-text-top">
+        <span class="ms-2">Аппеляция</span>
+      </a>
+    </div>
+  </nav>
+  <div id="liveAlertPlaceholder" role="alert"></div>
+  <main>
+    <div class="container py-4">
+      <div class="mb-4 text-end">
+        <a class="btn btn-outline-primary" id="backToGameBtn">Вернуться к игре</a>
+      </div>
+      <div id="appeals-main"></div>
+    </div>
+  </main>
+  <footer class="bg-body-tertiary text-center text-lg-start mt-4 border-top">
+    <div class="container p-3">
+      <div class="row align-items-center">
+        <div class="col-lg-6 text-lg-start text-center mb-2 mb-lg-0">
+          <span class="fw-bold">ARTEnet &copy; 2025</span>
+        </div>
+        <div class="col-lg-6 text-lg-end text-center">
+          <a href="../../main.html" class="text-decoration-none text-secondary me-3">Главный экран</a>
+          <a href="mailto:ltartenet@gmail.com" class="text-decoration-none text-secondary me-3">Поддержка</a>
+          <a href="#" class="text-decoration-none text-secondary disabled">Политика конфиденциальности</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+    import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+      authDomain: "artenetshop-7b884.firebaseapp.com",
+      projectId: "artenetshop-7b884",
+      storageBucket: "artenetshop-7b884.appspot.com",
+      messagingSenderId: "542098227452",
+      appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+      measurementId: "G-8PDLBR77YN",
+      databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    // Получаем параметры из URL
+    function getQueryParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+    const gameId = getQueryParam('game');
+    let uid = getQueryParam('uid');
+
+    const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+    const appendAlert = (message, type) => {
+      while (alertPlaceholder.children.length >= 2) {
+        alertPlaceholder.removeChild(alertPlaceholder.firstChild);
+      }
+      const wrapper = document.createElement('div');
+      wrapper.className = `alert alert-${type} alert-dismissible fade show`;
+      wrapper.role = 'alert';
+      wrapper.innerHTML = `
+        <div>${message}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      alertPlaceholder.append(wrapper);
+      setTimeout(() => {
+        wrapper.classList.remove("show");
+        setTimeout(() => wrapper.remove(), 150);
+      }, 10000);
+    };
+
+    // Генерация уникального id аппеляции
+    function generateAppealId() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let id = '';
+      for (let i = 0; i < 9; i++) id += chars.charAt(Math.floor(Math.random() * chars.length));
+      return id;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user || !user.emailVerified) {
+        window.location.href = "../index.html";
+        return;
+      }
+      if (!uid) uid = user.uid;
+
+      // Получаем данные игры, туров, результатов, штрафов, аппеляций
+      const [gameSnap, toursSnap, resultsSnap, penaltiesSnap, appealsSnap] = await Promise.all([
+        get(ref(db, `apps/chgk/games/${gameId}`)),
+        get(ref(db, `apps/chgk/games/${gameId}/tours`)),
+        get(ref(db, `apps/chgk/games/${gameId}/results/${uid}`)),
+        get(ref(db, `apps/chgk/games/${gameId}/penalties/${uid}`)),
+        get(ref(db, `apps/chgk/games/${gameId}/appeals`)),
+      ]);
+      const game = gameSnap.exists() ? gameSnap.val() : {};
+      const tours = toursSnap.exists() ? toursSnap.val() : {};
+      const results = resultsSnap.exists() ? resultsSnap.val() : {};
+      const penalties = penaltiesSnap.exists() ? penaltiesSnap.val() : [];
+      let appeals = appealsSnap.exists() ? appealsSnap.val() : {};
+      if (Array.isArray(appeals)) {
+        // миграция старых аппеляций
+        const obj = {};
+        appeals.forEach(a => { if (a && a.id) obj[a.id] = a; });
+        appeals = obj;
+      }
+
+      // Формируем список туров и вопросов для выбора
+      const tourOptions = Object.entries(tours).map(([tid, t]) =>
+        `<option value="${tid}">${t.name || tid}</option>`
+      ).join('');
+
+      // Форма для новой аппеляции
+      let formHtml = `
+        <div class="card mb-4 shadow">
+          <div class="card-header bg-info text-white fw-bold">Подать новую аппеляцию</div>
+          <div class="card-body">
+            <form id="appealForm">
+              <div class="mb-3">
+                <label class="form-label">Тип аппеляции</label>
+                <select class="form-select" name="type" required>
+                  <option value="">Выберите тип</option>
+                  <option value="question">На вопрос</option>
+                  <option value="penalty">На штраф</option>
+                </select>
+              </div>
+              <div id="appealTypeFields"></div>
+              <div class="mb-3">
+                <label class="form-label">Комментарий</label>
+                <textarea class="form-control" name="comment" rows="2" required placeholder="Опишите причину аппеляции"></textarea>
+              </div>
+              <button class="btn btn-info w-100 fw-bold" type="submit">Отправить аппеляцию</button>
+            </form>
+          </div>
+        </div>
+      `;
+
+      // Список текущих аппеляций пользователя
+      const myAppeals = Object.values(appeals).filter(a => a.uid === uid);
+      let appealsHtml = `
+        <div class="card shadow">
+          <div class="card-header bg-secondary text-white fw-bold">Ваши аппеляции</div>
+          <div class="card-body">
+            ${myAppeals.length === 0 ? `<div class="text-secondary text-center">Нет активных аппеляций</div>` :
+              `<div class="row g-3">
+                ${myAppeals.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')).map(a => {
+                  // Статус: new/active/archived/approved/rejected
+                  let status = a.status || "active";
+                  let statusText = "На рассмотрении";
+                  let statusClass = "bg-warning text-dark";
+                  if (status === "approved") { statusText = "Одобрено"; statusClass = "bg-success"; }
+                  else if (status === "rejected") { statusText = "Отклонено"; statusClass = "bg-danger"; }
+                  else if (status === "archived") { statusText = "Архив"; statusClass = "bg-secondary"; }
+                  // Дата
+                  let dateStr = "";
+                  if (a.createdAt) {
+                    try {
+                      dateStr = new Date(a.createdAt).toLocaleString("ru-RU", { dateStyle: "medium", timeStyle: "short" });
+                    } catch {}
+                  }
+                  // Детали
+                  let details = "";
+                  if (a.type === 'question') {
+                    const tour = tours[a.tour] || {};
+                    const q = Array.isArray(tour.questions) && typeof a.questionIdx === "number"
+                      ? tour.questions[a.questionIdx] : {};
+                    const userAns = Array.isArray(results[a.tour]?.answers) && typeof a.questionIdx === "number"
+                      ? results[a.tour].answers[a.questionIdx] : "";
+                    details = `
+                      <div><b>Тур:</b> ${tour.name || a.tour}</div>
+                      <div><b>Вопрос №:</b> ${typeof a.questionIdx === "number" ? (a.questionIdx + 1) : ""}</div>
+                      <div><b>Вопрос:</b> ${q.question || "<i>нет</i>"}</div>
+                      <div><b>Ваш ответ:</b> ${userAns || "<i>нет</i>"}</div>
+                    `;
+                  } else if (a.type === 'penalty') {
+                    const pen = Array.isArray(penalties) ? penalties.find(p => p.tour === a.tour) : null;
+                    details = `
+                      <div><b>Тур:</b> ${(tours[a.tour]?.name || a.tour)}</div>
+                      <div><b>Штраф:</b> ${pen ? (pen.points ? `-${pen.points} баллов` : (pen.percent ? `-${pen.percent}%` : "")) : ""}</div>
+                      <div><b>Причина штрафа:</b> ${pen ? pen.reason : ""}</div>
+                    `;
+                  }
+                  // Комментарий администратора
+                  let adminComment = a.adminComment ? `<div class="mt-2"><b>Комментарий администратора:</b> <span class="text-info">${a.adminComment}</span></div>` : "";
+                  return `
+                    <div class="col-12 col-md-6">
+                      <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge ${statusClass}">${statusText}</span>
+                            <span class="text-secondary small">${dateStr}</span>
+                          </div>
+                          ${details}
+                          <div class="mt-2"><b>Ваш комментарий:</b> ${a.comment}</div>
+                          ${adminComment}
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>`
+            }
+          </div>
+        </div>
+      `;
+
+      document.getElementById('appeals-main').innerHTML = `
+        <h2 class="mb-4 text-center fw-bold">${game.Name || "Аппеляции"}</h2>
+        ${formHtml}
+        ${appealsHtml}
+      `;
+
+      // Динамическое отображение полей формы
+      const appealTypeFields = document.getElementById('appealTypeFields');
+      document.querySelector('select[name="type"]').onchange = function () {
+        const type = this.value;
+        if (type === "question") {
+          // На вопрос: выбирать тур, вопрос, показывать сам вопрос и ваш ответ
+          appealTypeFields.innerHTML = `
+            <div class="mb-3">
+              <label class="form-label">Тур</label>
+              <select class="form-select" name="tour" required>
+                <option value="">Выберите тур</option>
+                ${tourOptions}
+              </select>
+            </div>
+            <div class="mb-3" id="questionSelectDiv" style="display:none"></div>
+            <div class="mb-3" id="questionPreviewDiv" style="display:none"></div>
+          `;
+          // Тур выбран — показать вопросы
+          const tourSelect = appealTypeFields.querySelector('select[name="tour"]');
+          tourSelect.onchange = function () {
+            const tid = this.value;
+            if (!tid) {
+              document.getElementById('questionSelectDiv').style.display = 'none';
+              document.getElementById('questionPreviewDiv').style.display = 'none';
+              return;
+            }
+            const tour = tours[tid];
+            const questions = Array.isArray(tour?.questions) ? tour.questions : [];
+            // Получить ответы пользователя на этот тур
+            const userAnswers = Array.isArray(results[tid]?.answers) ? results[tid].answers : [];
+            document.getElementById('questionSelectDiv').style.display = '';
+            document.getElementById('questionSelectDiv').innerHTML = `
+              <label class="form-label">Вопрос</label>
+              <select class="form-select" name="questionIdx" required>
+                <option value="">Выберите вопрос</option>
+                ${questions.map((q, i) => `<option value="${i}">Вопрос ${i + 1}</option>`).join('')}
+              </select>
+            `;
+            // При выборе вопроса — показать сам вопрос и ваш ответ
+            const qSelect = document.querySelector('select[name="questionIdx"]');
+            qSelect.onchange = function () {
+              const idx = Number(this.value);
+              if (isNaN(idx)) {
+                document.getElementById('questionPreviewDiv').style.display = 'none';
+                return;
+              }
+              const q = questions[idx] || {};
+              const userAns = userAnswers[idx] || "";
+              document.getElementById('questionPreviewDiv').style.display = '';
+              document.getElementById('questionPreviewDiv').innerHTML = `
+                <div class="alert alert-secondary">
+                  <b>Вопрос:</b> ${q.question || "<i>нет</i>"}<br>
+                  <b>Ваш ответ:</b> ${userAns || "<i>нет</i>"}
+                </div>
+              `;
+            };
+          };
+        } else if (type === "penalty") {
+          // На штраф: выбрать тур, показать штраф
+          appealTypeFields.innerHTML = `
+            <div class="mb-3">
+              <label class="form-label">Тур</label>
+              <select class="form-select" name="tour" required>
+                <option value="">Выберите тур</option>
+                ${tourOptions}
+              </select>
+            </div>
+            <div class="mb-3" id="penaltyPreviewDiv" style="display:none"></div>
+          `;
+          const tourSelect = appealTypeFields.querySelector('select[name="tour"]');
+          tourSelect.onchange = function () {
+            const tid = this.value;
+            if (!tid) {
+              document.getElementById('penaltyPreviewDiv').style.display = 'none';
+              return;
+            }
+            // Найти штраф по этому туру
+            const pen = Array.isArray(penalties) ? penalties.find(p => p.tour === tid) : null;
+            document.getElementById('penaltyPreviewDiv').style.display = '';
+            document.getElementById('penaltyPreviewDiv').innerHTML = pen
+              ? `<div class="alert alert-danger">
+                  <b>Штраф:</b> ${pen.points ? `-${pen.points} баллов` : (pen.percent ? `-${pen.percent}%` : "")}<br>
+                  <b>Причина:</b> ${pen.reason}
+                </div>`
+              : `<div class="alert alert-warning">Штраф по этому туру не найден.</div>`;
+          };
+        } else {
+          appealTypeFields.innerHTML = '';
+        }
+      };
+
+      // Обработка отправки формы
+      document.getElementById('appealForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const type = fd.get('type');
+        const tour = fd.get('tour');
+        const comment = fd.get('comment');
+        if (!type || !tour || !comment) {
+          appendAlert("Заполните все поля!", "danger");
+          return;
+        }
+        let appealObj = {
+          id: generateAppealId(),
+          uid,
+          type,
+          tour,
+          comment,
+          createdAt: new Date().toISOString()
+        };
+        if (type === "question") {
+          const questionIdx = Number(fd.get('questionIdx'));
+          if (isNaN(questionIdx)) {
+            appendAlert("Выберите вопрос!", "danger");
+            return;
+          }
+          appealObj.questionIdx = questionIdx;
+        }
+        // Проверка на дублирование аппеляции по тому же вопросу/штрафу
+        const isDuplicate = Object.values(appeals).some(a =>
+          a.uid === uid && a.type === type && a.tour === tour &&
+          (type === "question" ? a.questionIdx === appealObj.questionIdx : true)
+        );
+        if (isDuplicate) {
+          appendAlert("Вы уже подали аппеляцию по этому вопросу/штрафу!", "warning");
+          return;
+        }
+        // Сохраняем аппеляцию
+        await set(ref(db, `apps/chgk/games/${gameId}/appeals/${appealObj.id}`), appealObj);
+        appendAlert("Аппеляция отправлена!", "success");
+        window.location.reload();
+      };
+      document.getElementById('backToGameBtn').onclick = function() {
+        window.location.href = `game-mode.html?game=${encodeURIComponent(gameId)}&uid=${encodeURIComponent(uid)}`;
+      };
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

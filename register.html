@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+      .bd-mode-toggle .dropdown-menu .active .bi {
+        display: block !important;
+      }
+
+
+            html,
+      body {
+        height: 100%;
+      }
+
+      .form-signin {
+        max-width: 500px;
+        padding: 1rem;
+      }
+
+      .form-signin .form-floating:focus-within {
+        z-index: 2;
+      }
+
+      .form-signin input {
+        margin-bottom: 0px;
+      }
+
+      /*
+      .form-signin input[type="password"] {
+        margin-bottom: 0px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }*/
+      
+
+    </style>
+
+
+  </head>
+
+  <body class="d-flex align-items-center py-4 bg-body-tertiary">
+    <main class="form-signin w-80 m-auto">
+      <form autocomplete="off">
+        <img class="mb-4" src="photos/logo-color-2.png" alt="" width=100%>
+        <h1 class="h3 mb-3 fw-normal">Зарегистрируйтесь</h1>
+
+        <div id="liveAlertPlaceholder" role="alert"></div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="addon-wrapping">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-badge" viewBox="0 0 16 16">
+              <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+              <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492z"/>
+            </svg>
+          </span>
+          <input name="name" id="name" type="text" class="form-control" placeholder="Ваше имя" aria-label="Name" autocomplete="off" aria-describedby="addon-wrapping" autofocus required>
+        </div>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="addon-wrapping">@</span>
+          <input name="login" id="login" type="email" class="form-control" placeholder="Электронная почта" aria-label="Login" autocomplete="off" aria-describedby="addon-wrapping" required>
+        </div>
+
+        <div class="input-group mb-2">
+          <span class="input-group-text" id="addon-wrapping">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-key" viewBox="0 0 16 16">
+              <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"></path>
+              <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"></path>
+            </svg>
+          </span>
+          <input name="password" id="password" type="password" class="form-control" placeholder="Пароль" aria-label="Password" autocomplete="off" aria-describedby="addon-wrapping" required>
+        </div>
+
+        <div class="input-group mb-4">
+          <span class="input-group-text" id="addon-wrapping">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-key" viewBox="0 0 16 16">
+              <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"></path>
+              <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"></path>
+            </svg>
+          </span>
+          <input name="rpassword" id="rpassword" type="password" class="form-control" placeholder="Повторите пароль" aria-label="rPassword" autocomplete="off" aria-describedby="addon-wrapping" required>
+        </div>
+
+        <button class="btn btn-primary w-100 py-2" type="submit">Зарегистрироваться</button>
+
+        <p class="mt-4 text-body-primary"><em>Уже есть аккаунт? <a href="index.html">Войдите!</a></em></p>
+
+        <p class="mt-5 mb-3 text-body-secondary">&copy; ARTEnet 2025</p>
+      </form>
+    </main>
+
+    <!--    FIREBASE    -->
+        
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+      import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+      import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+        authDomain: "artenetshop-7b884.firebaseapp.com",
+        projectId: "artenetshop-7b884",
+        storageBucket: "artenetshop-7b884.appspot.com",
+        messagingSenderId: "542098227452",
+        appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+        measurementId: "G-8PDLBR77YN",
+        databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const analytics = getAnalytics(app);
+      const database = getDatabase(app);
+
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+      const loginInput = document.getElementById("login");
+      const passwordInput = document.getElementById("password");
+      const nameInput = document.getElementById("name");
+      const rpasswordInput = document.getElementById("rpassword");
+      const button = document.querySelector("button[type='submit']");
+
+      const appendAlert = (message, type) => {
+        // Удалим лишние алерты, если их больше двух
+        while (alertPlaceholder.children.length >= 2) {
+          alertPlaceholder.removeChild(alertPlaceholder.firstChild);
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = `alert alert-${type} alert-dismissible fade show`;
+        wrapper.role = 'alert';
+        wrapper.innerHTML = `
+          <div>${message}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        alertPlaceholder.append(wrapper);
+
+        // Удаление алерта через 10 секунд
+        setTimeout(() => {
+          wrapper.classList.remove("show"); // плавное исчезновение
+          setTimeout(() => wrapper.remove(), 150); // удаление из DOM
+        }, 10000);
+      };
+
+      document.querySelector("form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = loginInput.value.trim();
+        const password = passwordInput.value;
+        const name = nameInput.value.trim();
+        const rpassword = rpasswordInput.value;
+
+        //console.log("email:", email, "password:", password, "name:", name, "rpassword:", rpassword);
+
+        // Проверка: поля не пусты
+        if (!email || !password || !rpassword || !name) {
+          appendAlert("Заполните все поля", "warning");
+          return;
+        }
+        if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
+          appendAlert("Введите корректный email.", "danger");
+          return;
+        }
+        if (password.length < 6) {
+          appendAlert("Пароль должен содержать минимум 6 символов.", "danger");
+          return;
+        }
+        if (password !== rpassword) {
+          appendAlert("Пароли не совпадают", "danger");
+          return;
+        }
+
+        // Блокируем поля и кнопку
+        nameInput.readOnly = true;
+        loginInput.readOnly = true;
+        passwordInput.readOnly = true;
+        rpasswordInput.readOnly = true;
+        button.disabled = true;
+        button.innerHTML = `
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Регистрация...
+        `;
+
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+
+          await sendEmailVerification(user);
+
+          // Запись данных пользователя в Realtime Database
+          const userId = user.uid;
+          await set(ref(database, 'users/' + userId), {
+            username: name,
+            email: email,
+            createdAt: new Date().toISOString(),
+            apps: ""
+          });
+
+          appendAlert("Успешная регистрация! Подтвердите ваш email по ссылке, отправленной на вашу почту перед входом в аккаунт.", "success");
+
+          //window.location.href = "index.html";
+
+        } catch (error) {
+          let message = "Произошла ошибка при регистрации.";
+          if (error.code === "auth/email-already-in-use") {
+            message = "Этот email уже зарегистрирован.";
+          } else if (error.code === "auth/invalid-email") {
+            message = "Некорректный email.";
+          } else if (error.code === "auth/weak-password") {
+            message = "Пароль должен содержать минимум 6 символов.";
+          }
+
+          console.log(error);
+
+          appendAlert(message, "danger");
+        }
+
+        // Разблокируем поля и кнопку
+        nameInput.readOnly = false;
+        nameInput.value = "";
+        loginInput.readOnly = false;
+        loginInput.value = "";
+        passwordInput.readOnly = false;
+        passwordInput.value = "";
+        rpasswordInput.readOnly = false;
+        rpasswordInput.value = "";
+        button.disabled = false;
+        button.innerHTML = "Зарегистрироваться";
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+  </body>
+</html>

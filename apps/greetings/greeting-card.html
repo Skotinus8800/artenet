@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поздравление</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      /* Фоновый праздничный паттерн */
+      background: 
+        repeating-linear-gradient(135deg, #f8fafc 0 40px, #e0e7ff 40px 80px, #f8fafc 80px 120px),
+        url('https://png.pngtree.com/thumb_back/fw800/background/20230527/pngtree-festive-confetti-and-streamers-on-transparent-background-image_2727277.jpg');
+      background-size: cover, 300px 300px;
+      background-attachment: fixed;
+    }
+
+    body {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      min-width: 100vw;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .greeting-confetti-bg {
+      pointer-events: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+    }
+
+    .greeting-card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 2rem;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+      padding: 2.5rem 2rem 2rem 2rem;
+      width: 100%;
+      max-width: 600px;
+      min-width: 0;
+      box-sizing: border-box;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: cardIn 1s cubic-bezier(.68, -0.55, .27, 1.55);
+      z-index: 1;
+      margin: 3vh 0 3vh 0;
+    }
+
+    @keyframes cardIn {
+      0% {
+        transform: scale(0.7) rotate(-8deg);
+        opacity: 0;
+      }
+      80% {
+        transform: scale(1.05) rotate(2deg);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    .greeting-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #4f46e5;
+      margin-bottom: 1.5rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.7s;
+    }
+
+    .greeting-from-big {
+      font-size: 1.3rem;
+      color: #64748b;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.7s;
+    }
+
+    .greeting-photo {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      max-height: 60vh;
+      border-radius: 1rem;
+      margin-bottom: 1.2rem;
+      object-fit: cover;
+      box-shadow: 0 2px 16px 0 rgba(31, 38, 135, 0.08);
+      opacity: 0;
+      transition: opacity 0.7s;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      background: #f3f3f3;
+    }
+
+    /* Для мобильных устройств */
+    @media (max-width: 600px) {
+      .greeting-photo {
+        height: 50vw;
+        max-height: 60vh;
+      }
+    }
+
+    .greeting-message {
+      font-size: 1.25rem;
+      color: #22223b;
+      margin-bottom: 2rem;
+      white-space: pre-line;
+      opacity: 0;
+      transition: opacity 0.7s;
+    }
+
+    .greeting-from-small {
+      font-size: 1rem;
+      color: #64748b;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.7s;
+    }
+
+    .greeting-timer {
+      font-size: 0.95rem;
+      color: #b91c1c;
+      opacity: 0;
+      transition: opacity 0.7s;
+    }
+
+    .made-by {
+      margin-top: 2.5rem;
+      font-size: 1rem;
+      color: #64748b;
+      opacity: 0.8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      user-select: none;
+    }
+
+    .made-by img {
+      height: 1.8rem;
+      vertical-align: middle;
+      margin-left: 0.3rem;
+      border-radius: 0.4rem;
+      background: #fff;
+      box-shadow: 0 1px 4px 0 rgba(31, 38, 135, 0.08);
+    }
+
+    .fullscreen-message {
+      min-height: 100vh;
+      min-width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #b91c1c;
+      background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+      text-align: center;
+      z-index: 10;
+      position: fixed;
+      left: 0;
+      top: 0;
+    }
+
+    @media (max-width: 600px) {
+      html, body {
+        min-height: 100vh;
+        height: 100%;
+        width: 100vw;
+        overflow-y: auto !important;
+      }
+      .greeting-card {
+        padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+        max-width: 98vw;
+        margin: 2vw 0 2vw 0;
+      }
+      .greeting-photo {
+        max-width: 98vw;
+        height: 160px;
+      }
+      .greeting-title {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas class="greeting-confetti-bg"></canvas>
+  <div class="greeting-card position-relative" id="greeting-card" style="display:none;">
+    <div class="greeting-title h2" id="greeting-title"></div>
+    <div class="greeting-from-big" id="greeting-from-big"></div>
+    <img class="greeting-photo" id="greeting-photo" alt="Фото поздравления">
+    <div class="greeting-message" id="greeting-message"></div>
+    <div class="greeting-from-small" id="greeting-from-small"></div>
+    <div class="greeting-timer" id="greeting-timer"></div>
+    <div class="made-by">
+        C помощью
+        <img src="../../photos/logo-color-2.png" alt="ARTEnet" title="ARTEnet"><b>Поздравления</b>
+    </div>
+  </div>
+  <div id="fullscreen-message" class="fullscreen-message" style="display:none;"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    // Firebase config (тот же, что и в greetings.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+      authDomain: "artenetshop-7b884.firebaseapp.com",
+      projectId: "artenetshop-7b884",
+      storageBucket: "artenetshop-7b884.appspot.com",
+      messagingSenderId: "542098227452",
+      appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+      measurementId: "G-8PDLBR77YN",
+      databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Получаем id поздравления из URL
+    const params = new URLSearchParams(window.location.search);
+    const greetId = params.get("id");
+
+    function formatTimeLeft(ms) {
+      if (ms <= 0) return "0 сек.";
+      const d = Math.floor(ms / (24 * 60 * 60 * 1000));
+      const h = Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+      const m = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
+      const s = Math.floor((ms % (60 * 1000)) / 1000);
+      let str = "";
+      if (d > 0) str += `${d} д. `;
+      if (h > 0) str += `${h} ч. `;
+      if (m > 0) str += `${m} мин. `;
+      if (s > 0) str += `${s} сек.`;
+      return str.trim();
+    }
+
+    async function loadGreeting() {
+      if (!greetId) {
+        showFullscreenMessage("Открытка не найдена");
+        return;
+      }
+      const greetingsRoot = ref(db, "apps/greetings/userData");
+      const snap = await get(greetingsRoot);
+      let found = null,
+        foundUid = null;
+      if (snap.exists()) {
+        snap.forEach(userSnap => {
+          const greetings = userSnap.child("greetings").val();
+          if (greetings && greetings[greetId]) {
+            found = greetings[greetId];
+            foundUid = userSnap.key;
+            return true; // break
+          }
+        });
+      }
+      if (!found) {
+        showFullscreenMessage("Открытка не найдена");
+        return;
+      }
+
+      // Проверка времени жизни
+      const createdAt = found.createdAt || 0;
+      const lifetime = typeof found.lifetime === "number" ? found.lifetime : 3;
+      const lifetimeMs = lifetime > 0 ? lifetime * 24 * 60 * 60 * 1000 : 0;
+      const expiresAt = lifetimeMs > 0 ? createdAt + lifetimeMs : null;
+      const now = Date.now();
+
+      if (lifetimeMs > 0 && expiresAt && now > expiresAt) {
+        // Удаляем открытку и фото, если есть
+        if (foundUid) {
+          // Удалить фото, если есть
+          if (found.photoUrl) {
+            try {
+              await fetch('/apps/greetings/delete-photo.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: found.photoUrl })
+              });
+            } catch (e) {
+              // Ошибку можно игнорировать, если файла уже нет
+            }
+          }
+          await remove(ref(db, `apps/greetings/userData/${foundUid}/greetings/${greetId}`));
+        }
+        showFullscreenMessage("Время открытки прошло");
+        return;
+      }
+
+      // Анимация: 0-2.5с - title и big from, 2.5-5.5с - конфетти, 5.5-30с - фото, текст, мелкий from, таймер
+      document.getElementById("greeting-card").style.display = "";
+      const titleEl = document.getElementById("greeting-title");
+      const fromBigEl = document.getElementById("greeting-from-big");
+      const messageEl = document.getElementById("greeting-message");
+      const fromSmallEl = document.getElementById("greeting-from-small");
+      const timerEl = document.getElementById("greeting-timer");
+      const photoEl = document.getElementById("greeting-photo");
+
+      // Сброс видимости
+      titleEl.style.opacity = 0;
+      fromBigEl.style.opacity = 0;
+      messageEl.style.opacity = 0;
+      fromSmallEl.style.opacity = 0;
+      timerEl.style.opacity = 0;
+      photoEl.style.opacity = 0;
+      photoEl.style.display = "none";
+
+      // 1. Показываем title и big from
+      titleEl.textContent = found.title || "Поздравление";
+      fromBigEl.textContent = found.from ? `От: ${found.from}` : "";
+      setTimeout(() => {
+        titleEl.style.opacity = 1;
+      }, 200);
+      setTimeout(() => {
+        fromBigEl.style.opacity = 1;
+      }, 800);
+
+      // 2. Конфетти и хлопушки (2.5-5.5с)
+      setTimeout(() => {
+        launchConfetti();
+      }, 2500);
+
+      // 3. Показываем фото, текст, мелкий from, таймер (после 5.5с)
+      setTimeout(() => {
+        if (found.photoUrl) {
+          photoEl.src = found.photoUrl;
+          photoEl.style.display = "";
+          setTimeout(() => { photoEl.style.opacity = 1; }, 100);
+        } else {
+          photoEl.style.display = "none";
+        }
+        messageEl.textContent = found.text || "";
+        fromSmallEl.textContent = found.from ? `От: ${found.from}` : "";
+        messageEl.style.opacity = 1;
+        fromSmallEl.style.opacity = 1;
+        timerEl.style.opacity = 1;
+        // Скрыть верхний "от кого", если есть нижний
+        if (fromSmallEl.textContent) {
+          fromBigEl.style.opacity = 0;
+          setTimeout(() => { fromBigEl.style.display = "none"; }, 700);
+        }
+        // Таймер жизни открытки
+        if (lifetimeMs > 0 && expiresAt) {
+          function updateTimer() {
+            const left = expiresAt - Date.now();
+            timerEl.textContent = left > 0
+              ? `Открытка будет доступна ещё: ${formatTimeLeft(left)}`
+              : "Открытка скоро будет удалена";
+          }
+          updateTimer();
+          setInterval(updateTimer, 1000);
+        } else {
+          timerEl.textContent = "Открытка бессрочная";
+        }
+      }, 5500);
+
+      // Установка фонового изображения, если указано
+      let bgUrl = "";
+      switch (found.bg) {
+        case "bg1.jpg": bgUrl = "bg1.jpg"; break;
+        case "bg2.jpg": bgUrl = "bg2.jpg"; break;
+        case "bg3.jpg": bgUrl = "bg3.jpg"; break;
+        default: bgUrl = ""; // стандартный
+      }
+      if (bgUrl) {
+        document.body.style.backgroundImage = `url('${bgUrl}')`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundRepeat = "no-repeat";
+        document.body.style.backgroundAttachment = "fixed";
+      }
+    }
+
+    function showFullscreenMessage(msg) {
+      document.getElementById("greeting-card").style.display = "none";
+      const fm = document.getElementById("fullscreen-message");
+      fm.textContent = msg;
+      fm.style.display = "";
+    }
+
+    loadGreeting();
+
+    // --- Конфетти на фоне ---
+    function launchConfetti() {
+      const canvas = document.querySelector('.greeting-confetti-bg');
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = window.innerWidth;
+      let H = canvas.height = window.innerHeight;
+      let particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * -H,
+          r: Math.random() * 8 + 4,
+          d: Math.random() * 80,
+          color: `hsl(${Math.random() * 360},90%,70%)`,
+          tilt: Math.random() * 10 - 10,
+          tiltAngleIncremental: (Math.random() * 0.07) + .05,
+          tiltAngle: 0
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        for (let i = 0; i < particles.length; i++) {
+          let p = particles[i];
+          ctx.beginPath();
+          ctx.lineWidth = p.r;
+          ctx.strokeStyle = p.color;
+          ctx.moveTo(p.x + p.tilt + (p.r / 3), p.y);
+          ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+          ctx.stroke();
+        }
+        update();
+      }
+
+      function update() {
+        for (let i = 0; i < particles.length; i++) {
+          let p = particles[i];
+          p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+          p.x += Math.sin(0.01 * p.d);
+          p.tiltAngle += p.tiltAngleIncremental;
+          p.tilt = Math.sin(p.tiltAngle - (i % 3)) * 15;
+          if (p.y > H) {
+            p.x = Math.random() * W;
+            p.y = -10;
+            p.tilt = Math.random() * 10 - 10;
+          }
+        }
+      }
+      let anim;
+
+      function loop() {
+        draw();
+        anim = requestAnimationFrame(loop);
+      }
+      loop();
+      window.addEventListener('resize', () => {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      });
+      setTimeout(() => cancelAnimationFrame(anim), 3000);
+    }
+  </script>
+</body>
+
+</html>

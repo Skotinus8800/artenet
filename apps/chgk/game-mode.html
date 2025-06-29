@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ЧГК | Режим игры</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+      .bd-mode-toggle .dropdown-menu .active .bi {
+        display: block !important;
+      }
+
+      html, body {
+        height: 100%;
+        min-height: 100vh;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      main {
+        flex: 1 0 auto;
+        padding-top: 56px;
+      }
+      footer {
+        flex-shrink: 0;
+      }
+
+      .black{
+        color:rgba(0, 0, 0, 0.803);
+        background-color: rgba(97, 97, 97, 0.325);
+        border-radius: 10px;
+      }
+
+      #liveAlertPlaceholder {
+        position: fixed;
+        top: 70px; /* чуть ниже navbar */
+        left: 0;
+        right: 0;
+        z-index: 2000;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #liveAlertPlaceholder .alert {
+        pointer-events: auto;
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body class="d-flex flex-column min-vh-100 p-0 m-0 border-0 bd-example">
+    <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="../chgk.html">
+          <img src="../../photos/logo-color-2.png" alt="ARTEnet" height="30" class="d-inline-block align-text-top">
+          <img src="../../photos/chgk-logo.jpg" alt="ЧГК" height="30" class="d-inline-block align-text-top">
+          <span class="ms-2">ЧГК</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <small>
+            <em>
+              <span class="navbar-text m-2" id="user-id">
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              </span>
+            </em>
+          </small>
+        </div>
+      </div>
+    </nav>
+
+    <div id="liveAlertPlaceholder" role="alert"></div>
+
+    <div class="modal fade" id="noChgkModal" tabindex="-1" aria-labelledby="noChgkModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header border-0">
+            <h5 class="modal-title w-100" id="noChgkModalLabel">Нет доступа</h5>
+          </div>
+          <div class="modal-body">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10rem" height="10rem" fill="currentColor" class="bi bi-emoji-astonished mb-2" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+              <path d="M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5m4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5M4.884 4.022a2 2 0 0 1 1.458-.048.5.5 0 0 0 .316-.948 3 3 0 0 0-2.167.077 3.1 3.1 0 0 0-.773.478q-.036.03-.07.064l-.002.001a.5.5 0 0 0 .707.708l-.001.002.001-.002a2 2 0 0 1 .122-.1 2 2 0 0 1 .41-.232Zm6.232 0a2 2 0 0 0-1.458-.048.5.5 0 1 1-.316-.948 3 3 0 0 1 2.168.077 3 3 0 0 1 .773.478l.07.064v.001a.5.5 0 0 1-.706.708l.002.002-.002-.002a2 2 0 0 0-.122-.1 2 2 0 0 0-.41-.232ZM8 10c-.998 0-1.747.623-2.247 1.246-.383.478.08 1.06.687.98q1.56-.202 3.12 0c.606.08 1.07-.502.687-.98C9.747 10.623 8.998 10 8 10"/>
+            </svg>
+            <p class="mb-1 h5">У вас нет доступа этому к приложению.<br></p>
+            <p class="mb-3 leaad"><i>Если считаете, что это ошибка, обратитесь в <a href="mailto:ltartenet@gmail.com">поддержку</a>.</i></p>
+            <div class="progress mb-1" style="height: 0.5rem;">
+              <div id="noChgkProgress" class="progress-bar bg-danger" role="progressbar" style="width: 0%; transition: width 10s linear;"></div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center border-0">
+            <div class="w-100 px-3">
+              <button type="button" class="btn btn-danger w-100 py-2" id="noAccessBtn">Вернуться назад</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="blockedModal" tabindex="-1" aria-labelledby="blockedModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header border-0">
+            <h5 class="modal-title w-100" id="blockedModalLabel">Доступ заблокирован</h5>
+          </div>
+          <div class="modal-body">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10rem" height="10rem" fill="currentColor" class="bi bi-exclamation-triangle mb-2" viewBox="0 0 16 16">
+              <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+              <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+            </svg>
+            <p class="mb-1 h5">Ваш аккаунт заблокирован.<br></p>
+            <p class="mb-3 leaad"><i>Обратитесь в <a href="mailto:ltartenet@gmail.com">поддержку</a> для выяснения причин.</i></p>
+            <div class="progress" style="height: 0.5rem;">
+              <div id="blockedProgress" class="progress-bar bg-danger" role="progressbar" style="width: 100%; transition: width 10s linear;"></div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center border-0">
+            <div class="w-100 px-3">
+              <button type="button" class="btn btn-danger w-100 py-2" id="blockedBackBtn">Выйти</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center mt-4">
+      
+    </main>
+  
+    <footer class="bg-body-tertiary text-center text-lg-start mt-4 border-top">
+      <div class="container p-3">
+        <div class="row align-items-center">
+          <div class="col-lg-6 text-lg-start text-center mb-2 mb-lg-0">
+            <span class="fw-bold">ARTEnet &copy; 2025</span>
+          </div>
+          <div class="col-lg-6 text-lg-end text-center">
+            <a href="../../main.html" class="text-decoration-none text-secondary me-3">Главный экран</a>
+            <a href="mailto:ltartenet@gmail.com" class="text-decoration-none text-secondary me-3">Поддержка</a>
+            <a href="#" class="text-decoration-none text-secondary disabled">Политика конфиденциальности</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  <!--    FIREBASE    -->
+      
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getAuth, reload, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+    import { getDatabase, ref, get, set, remove, child, onValue } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+      authDomain: "artenetshop-7b884.firebaseapp.com",
+      projectId: "artenetshop-7b884",
+      storageBucket: "artenetshop-7b884.appspot.com",
+      messagingSenderId: "542098227452",
+      appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+      measurementId: "G-8PDLBR77YN",
+      databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const analytics = getAnalytics(app);
+    const user = sessionStorage.getItem('isLoggedIn');
+    const db = getDatabase(app);
+
+    const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+
+    const appendAlert = (message, type) => {
+      // Удалим лишние алерты, если их больше двух
+      while (alertPlaceholder.children.length >= 2) {
+        alertPlaceholder.removeChild(alertPlaceholder.firstChild);
+      }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = `alert alert-${type} alert-dismissible fade show`;
+      wrapper.role = 'alert';
+      wrapper.innerHTML = `
+        <div>${message}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+
+      alertPlaceholder.append(wrapper);
+
+      // Удаление алерта через 10 секунд
+      setTimeout(() => {
+        wrapper.classList.remove("show"); // плавное исчезновение
+        setTimeout(() => wrapper.remove(), 150); // удаление из DOM
+      }, 10000);
+    };
+
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user || !user.emailVerified) {
+        window.location.href = "../index.html";
+        return;
+      }
+      // Получаем данные пользователя
+      const userDbRef = ref(db, `users/${user.uid}`);
+      const userDbSnap = await get(userDbRef);
+      const userData = userDbSnap.exists() ? userDbSnap.val() : {};
+      const name = userData.username || "";
+      const email = user.email || "";
+      document.getElementById('user-id').textContent = name
+        ? `${name} (${email})`
+        : email;
+
+      // 1. Проверка блокировки пользователя
+      if (userDbSnap.exists() && userDbSnap.val().blocked) {
+        const blockedModalEl = document.getElementById('blockedModal');
+        const blockedModal = new bootstrap.Modal(blockedModalEl, { backdrop: 'static', keyboard: false });
+        const progressBar = document.getElementById('blockedProgress');
+        let timer;
+
+        progressBar.classList.remove("bg-secondary", "bg-success", "bg-warning");
+        progressBar.classList.add("bg-danger");
+        progressBar.style.transition = "none";
+        progressBar.style.width = "0%";
+
+        // ВАЖНО: анимация только после показа модалки!
+        blockedModalEl.addEventListener('shown.bs.modal', () => {
+          setTimeout(() => {
+            progressBar.style.transition = "width 10s linear";
+            progressBar.style.width = "100%";
+          }, 50);
+        }, { once: true });
+
+        document.getElementById("blockedBackBtn").onclick = async () => {
+          clearTimeout(timer);
+          blockedModal.hide();
+          await signOut(auth);
+          window.location.href = "../index.html";
+        };
+
+        timer = setTimeout(async () => {
+          blockedModal.hide();
+          await signOut(auth);
+          window.location.href = "../index.html";
+        }, 10000);
+
+        blockedModal.show();
+        return;
+      }
+
+      // 2. Проверка доступа к ЧГК
+      const apps = userDbSnap.exists() && userDbSnap.val().apps;
+      if (!apps || apps.chgk !== true) {
+        const modalEl = document.getElementById('noChgkModal');
+      const progressBar = document.getElementById('noChgkProgress');
+      const modal = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false });
+
+      progressBar.style.transition = "none";
+      progressBar.style.width = "0%";
+      modalEl.addEventListener('shown.bs.modal', () => {
+        setTimeout(() => {
+          progressBar.style.transition = "width 10s linear";
+          progressBar.style.width = "100%";
+        }, 50);
+      }, { once: true });
+
+      modal.show();
+
+      setTimeout(() => {
+        modal.hide();
+        window.location.href = "../main.html";
+      }, 10000);
+
+        return;
+      }
+
+      // Если все проверки пройдены, загружаем результаты
+      await loadGameResults();
+    });
+
+      
+/*
+    document.getElementById("logout-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      signOut(auth)
+        .then(() => {
+          window.location.href = "../index.html";
+        })
+        .catch((error) => {
+          appendAlert("Ошибка выхода: " + error.message, "danger");
+        });
+    });
+
+    document.getElementById('noAccessBtn').onclick = () => {
+      window.location.href = "../main.html";
+    };*/
+
+    // Получаем параметры из URL
+function getQueryParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+const uid = getQueryParam('uid');
+const gameId = getQueryParam('game');
+const currentUid = uid;
+
+async function loadGameResults() {
+  // Получаем данные игры
+  const gameSnap = await get(ref(db, `apps/chgk/games/${gameId}`));
+  if (!gameSnap.exists()) {
+    document.querySelector('main').innerHTML = `<div class="alert alert-danger">Игра не найдена</div>`;
+    return;
+  }
+  const game = gameSnap.val();
+
+  // Показываем дату в локальном времени пользователя
+  let localDate = "";
+  if (game.startAt) {
+    try {
+      localDate = new Date(game.startAt).toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short"
+      });
+    } catch {
+      localDate = game.date || "";
+    }
+  } else {
+    localDate = game.date || "";
+  }
+
+  // Получаем туры
+  const toursSnap = await get(ref(db, `apps/chgk/games/${gameId}/tours`));
+  const tours = toursSnap.exists() ? toursSnap.val() : {};
+  const tourIds = Object.keys(tours);
+  const tourNames = tourIds.map(tid => tours[tid]?.name || `Тур ${tid}`);
+
+  // Получаем участников
+  const participants = game.participants ? Object.values(game.participants) : [];
+
+  // Получаем результаты
+  const resultsSnap = await get(ref(db, `apps/chgk/games/${gameId}/results`));
+  const results = resultsSnap.exists() ? resultsSnap.val() : {};
+
+  // Получаем штрафы всех игроков
+  const penaltiesSnap = await get(ref(db, `apps/chgk/games/${gameId}/penalties`));
+  const penaltiesAll = penaltiesSnap.exists() ? penaltiesSnap.val() : {};
+
+  // Формируем таблицу результатов с местами и цветами
+let tableHtml = (() => {
+  // Считаем сумму очков и штрафы для каждого участника
+  const scored = participants.map(p => {
+    let total = 0;
+    // --- собираем штрафы по турам для игрока
+    const playerPenalties = Array.isArray(penaltiesAll?.[p.uid]) ? penaltiesAll[p.uid] : [];
+    // Мапа: tourId -> {points, percent, reason}
+    const tourPenaltyMap = {};
+    playerPenalties.forEach(pen => {
+      if (pen && pen.tour) tourPenaltyMap[pen.tour] = pen;
+    });
+
+    const tourSums = tourIds.map(tid => {
+      const pointsObj = results?.[p.uid]?.[tid]?.points || {};
+      let tourSum = 0;
+      if (typeof pointsObj === "object") {
+        for (const key in pointsObj) {
+          if (typeof pointsObj[key] === "number") tourSum += pointsObj[key];
+        }
+      } else if (typeof pointsObj === "number") {
+        tourSum = pointsObj;
+      }
+      // --- применяем штраф к туру, если есть
+      let penalty = 0;
+      const pen = tourPenaltyMap[tid];
+      if (pen) {
+        if (typeof pen.points === "number" && pen.points > 0) {
+          penalty = pen.points;
+        } else if (typeof pen.percent === "number" && pen.percent > 0) {
+          penalty = Math.round(tourSum * pen.percent / 100);
+        }
+      }
+      total += (tourSum - penalty);
+      return {tourSum, penalty, pen};
+    });
+
+    // Суммируем штрафы игрока (по всем турам)
+    let penaltySum = 0;
+    playerPenalties.forEach(pen => {
+      if (pen && typeof pen.points === "number" && pen.points > 0) penaltySum += pen.points;
+      else if (pen && typeof pen.percent === "number" && pen.percent > 0) {
+        // ищем сумму баллов по этому туру
+        const tid = pen.tour;
+        let tourSum = 0;
+        const pointsObj = results?.[p.uid]?.[tid]?.points || {};
+        if (typeof pointsObj === "object") {
+          for (const key in pointsObj) {
+            if (typeof pointsObj[key] === "number") tourSum += pointsObj[key];
+          }
+        } else if (typeof pointsObj === "number") {
+          tourSum = pointsObj;
+        }
+        penaltySum += Math.round(tourSum * pen.percent / 100);
+      }
+    });
+
+    // Итог с учетом штрафа
+    const totalWithPenalty = total;
+
+    return { p, total, tourSums, penaltySum, totalWithPenalty, tourPenaltyMap };
+  });
+
+  // Сортируем по totalWithPenalty (убывание)
+  scored.sort((a, b) => b.totalWithPenalty - a.totalWithPenalty);
+
+  // Присваиваем места с учётом одинаковых результатов
+  let place = 1;
+  let lastTotal = null;
+  scored.forEach((item, idx) => {
+    if (lastTotal === null || item.totalWithPenalty < lastTotal) {
+      place = idx + 1;
+      lastTotal = item.totalWithPenalty;
+    }
+    item.place = place;
+  });
+
+  // SVG для мест
+  const placeSVG = (place) => {
+    if (place === 1) {
+      return `<svg width="38" height="38" viewBox="0 0 32 32" style="vertical-align:middle"><circle cx="16" cy="16" r="16" fill="#ffe066"/><text x="16" y="22" text-anchor="middle" font-size="18" font-weight="bold" fill="#bfa100">1</text></svg>`;
+    } else if (place === 2) {
+      return `<svg width="38" height="38" viewBox="0 0 32 32" style="vertical-align:middle"><circle cx="16" cy="16" r="16" fill="#e9ecef"/><text x="16" y="22" text-anchor="middle" font-size="18" font-weight="bold" fill="#8c8c8c">2</text></svg>`;
+    } else if (place === 3) {
+      return `<svg width="38" height="38" viewBox="0 0 32 32" style="vertical-align:middle"><circle cx="16" cy="16" r="16" fill="#e6a86c"/><text x="16" y="22" text-anchor="middle" font-size="18" font-weight="bold" fill="#a05a00">3</text></svg>`;
+    }
+    return `<svg width="28" height="28" viewBox="0 0 32 32" style="vertical-align:middle"><circle cx="16" cy="16" r="16" fill="#dee2e6"/><text x="16" y="22" text-anchor="middle" font-size="18" font-weight="bold" fill="#888">${place}</text></svg>`;
+  };
+
+  // Для основной таблицы показываем только топ-5
+  const rows = scored.slice(0, 5).map(({p, total, tourSums, penaltySum, totalWithPenalty, place, tourPenaltyMap}) => {
+    // Мягкие цвета для топ-3 мест
+    let cellBg = "";
+    if (place === 1) cellBg = "background-color: #fff7c2 !important;";
+    else if (place === 2) cellBg = "background-color: #f1f3f6 !important;";
+    else if (place === 3) cellBg = "background-color: #ffe2c2 !important;";
+
+    // Для текущего пользователя — синий фон и жирный текст
+    const isCurrent = p.uid === currentUid;
+    const userBg = isCurrent ? "background-color: #cfe2ff !important; font-weight:bold;" : "";
+
+    // Если игрок в топ-3 и это текущий пользователь — синий фон поверх медали
+    const finalCellStyle = isCurrent ? userBg : cellBg;
+    const fontClass = "fs-4";
+
+    // Штраф (если есть)
+    let penaltyCell = "";
+    if (penaltySum > 0) {
+      // Только суммы штрафов, без причин
+      const playerPenalties = Object.values(tourPenaltyMap);
+      penaltyCell = playerPenalties.map(pen => {
+        let value = "";
+        let tourSum = 0;
+        const pointsObj = results?.[p.uid]?.[pen.tour]?.points || {};
+        if (typeof pointsObj === "object") {
+          for (const key in pointsObj) {
+            if (typeof pointsObj[key] === "number") tourSum += pointsObj[key];
+          }
+        } else if (typeof pointsObj === "number") {
+          tourSum = pointsObj;
+        }
+        if (pen.points) {
+          value = `-${pen.points}`;
+        } else if (pen.percent) {
+          value = `-${Math.round(tourSum * pen.percent / 100)}`;
+        }
+        return `
+          <div class="text-danger small d-flex align-items-center justify-content-center mt-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="#dc3545" class="bi bi-dash-circle me-1" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M5 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 5 8z"/>
+            </svg>
+            <span>${value}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- туровые ячейки с учётом штрафов
+    const tourCells = tourSums.map(({tourSum, penalty, pen}, idx) => {
+      let cell = `<div>${tourSum}</div>`;
+      if (penalty > 0) {
+        let value = "";
+        if (pen.points) {
+          value = `-${pen.points}`;
+        } else if (pen.percent) {
+          let tourSumVal = 0;
+          const pointsObj = results?.[p.uid]?.[tourIds[idx]]?.points || {};
+          if (typeof pointsObj === "object") {
+            for (const key in pointsObj) {
+              if (typeof pointsObj[key] === "number") tourSumVal += pointsObj[key];
+            }
+          } else if (typeof pointsObj === "number") {
+            tourSumVal = pointsObj;
+          }
+          value = `-${Math.round(tourSumVal * pen.percent / 100)}`;
+        }
+        cell += `
+          <div class="text-danger small d-flex align-items-center justify-content-center mt-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="#dc3545" class="bi bi-dash-circle me-1" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M5 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5A.5.5 0 0 1 5 8z"/>
+            </svg>
+            <span>${value}</span>
+          </div>
+        `;
+      }
+      return `<td class="align-middle ${fontClass}" style="${finalCellStyle}">${cell}</td>`;
+    }).join('');
+
+    return `<tr data-uid="${p.uid}">
+      <td class="align-middle ${fontClass}" style="${finalCellStyle}">${placeSVG(place)}</td>
+      <td class="align-middle ${fontClass}" style="${finalCellStyle}">${p.name || p.email || p.uid}</td>
+      ${tourCells}
+      <td class="align-middle ${fontClass}" style="${finalCellStyle}">
+        <div>${totalWithPenalty}</div>
+        ${penaltyCell}
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Заголовки с сортировкой
+  const tourHeaders = tourIds.map((tid, i) =>
+    `<th data-sort="tour${i}" style="cursor:pointer">Тур ${i + 1}</th>`
+  ).join('');
+
+  return `
+    <div class="table-responsive my-4">
+      <table class="table table-bordered table-hover text-center align-middle shadow-lg" id="resultsTable" style="background:#fff;border-radius:12px;overflow:hidden;">
+        <thead class="table-dark">
+          <tr>
+            <th style="min-width:70px" data-sort="place" style="cursor:pointer">Место</th>
+            <th style="min-width:160px" data-sort="name" style="cursor:pointer">Участник</th>
+            ${tourHeaders}
+            <th data-sort="total" style="cursor:pointer">Итого</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
+  `;
+})();
+
+  // Кнопка "Показать всех участников" если игроков больше 5
+  let showMoreBtn = "";
+  if (participants.length > 5) {
+    showMoreBtn = `
+      <div class="text-center mb-3">
+        <button class="btn btn-outline-primary" id="showAllResultsBtn">Показать всех участников</button>
+      </div>
+    `;
+  }
+
+  // Формируем блоки туров с кнопками и статусами
+  let toursHtml = tourIds.map((tid, i) => {
+    // Сколько участников уже отправили ответы на этот тур
+    let answered = 0;
+    participants.forEach(p => {
+      if (results?.[p.uid]?.[tid]?.answers && Array.isArray(results[p.uid][tid].answers)) answered++;
+    });
+    const total = participants.length;
+
+    // Статус тура (открыт/закрыт)
+    const isOpen = tours[tid]?.open !== false;
+    const statusText = isOpen ? "Открыт" : "Закрыт";
+    const statusClass = isOpen ? "bg-success" : "bg-secondary";
+
+    // Проверяем ответы текущего пользователя
+    const myResult = results?.[currentUid]?.[tid];
+    const myAnswers = myResult?.answers;
+    const myPoints = myResult?.points;
+    let myTotal = null;
+    if (myPoints && typeof myPoints === "object") {
+      myTotal = Object.values(myPoints).reduce((sum, v) => sum + (typeof v === "number" ? v : 0), 0);
+    }
+
+    // Кнопка "Мои ответы" — показывать только если тур проверен!
+    let myAnswersBtn = "";
+    if (
+      Array.isArray(myAnswers) && myAnswers.length > 0 &&
+      myPoints && typeof myPoints === "object" && Object.keys(myPoints).length > 0
+    ) {
+      myAnswersBtn = `
+        <button class="btn btn-outline-info btn-lg ms-2 px-4 fw-semibold" style="min-width:180px" data-my-answers="${tid}">Мои ответы</button>
+      `;
+    }
+
+    // Кнопка "Ответить на тур"
+    let answerBtn = `
+      <button class="btn btn-primary btn-lg px-4 fw-semibold" style="min-width:180px" data-tour="${tid}" ${!isOpen ? "disabled" : ""}>
+        Ответить на тур
+      </button>
+    `;
+
+    // Второй статус: отправлено/проверено/не отправлено
+    let status2 = "";
+    if (Array.isArray(myAnswers) && myAnswers.length > 0) {
+      if (myPoints && typeof myPoints === "object" && Object.keys(myPoints).length > 0) {
+        status2 = `<span class="badge bg-success ms-2">Проверено</span>`;
+      } else {
+        status2 = `<span class="badge bg-warning text-dark ms-2">Отправлено</span>`;
+      }
+    } else {
+      status2 = `<span class="badge bg-secondary ms-2">Не отправлено</span>`;
+    }
+
+    // Результат игрока по туру
+    let myResultText = "";
+    if (myTotal !== null) {
+      myResultText = `<span class="badge bg-primary ms-2">Ваш результат: <b>${myTotal}</b></span>`;
+    }
+
+    return `
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+          <div>
+            <div class="h5 mb-1">${tourNames[i]} ${myResultText}</div>
+            <div class="text-secondary small mb-1">Ответили: <b>${answered}</b> из <b>${total}</b></div>
+            <span class="badge ${statusClass}">${statusText}</span>
+            ${status2}
+          </div>
+          <div class="mt-3 mt-md-0 d-flex flex-wrap gap-2">
+            ${answerBtn}
+            ${myAnswersBtn}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Блок штрафов под блоками туров, рядом с кнопкой аппеляции
+  let penaltiesBlock = "";
+  // Собираем штрафы текущего пользователя
+  const myPenalties = Array.isArray(penaltiesAll?.[currentUid]) ? penaltiesAll[currentUid] : [];
+  if (myPenalties.length > 0) {
+    penaltiesBlock = `
+      <div class="my-4 d-flex justify-content-center" id="penaltiesBlock">
+        <div class="card border-danger shadow" style="max-width:480px;width:100%;">
+          <div class="card-header bg-danger text-white d-flex align-items-center" style="font-size:1.2rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+              <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+              <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+            </svg>
+            <span>Ваши штрафы</span>
+          </div>
+          <div class="card-body p-3">
+            <div class="table-responsive">
+              <table class="table table-sm table-borderless mb-0 align-middle">
+                <thead>
+                  <tr>
+                    <th class="text-start">Тур</th>
+                    <th class="text-center">Штраф</th>
+                    <th class="text-start">Причина</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${myPenalties.map(pen => {
+                    // вычисляем снятые очки
+                    let penaltyValue = "";
+                    let penaltyDetails = "";
+                    let tourName = tours[pen.tour]?.name || pen.tour;
+                    let tourSum = 0;
+                    const pointsObj = results?.[currentUid]?.[pen.tour]?.points || {};
+                    if (typeof pointsObj === "object") {
+                      for (const key in pointsObj) {
+                        if (typeof pointsObj[key] === "number") tourSum += pointsObj[key];
+                      }
+                    } else if (typeof pointsObj === "number") {
+                      tourSum = pointsObj;
+                    }
+                    if (pen.points) {
+                      penaltyValue = `-${pen.points}`;
+                      penaltyDetails = "";
+                    } else if (pen.percent) {
+                      const val = Math.round(tourSum * pen.percent / 100);
+                      penaltyValue = `-${val}`;
+                      penaltyDetails = `<span class="text-secondary ms-1">(${pen.percent}% от ${tourSum})</span>`;
+                    }
+                    return `
+                      <tr>
+                        <td class="text-start fw-semibold">${tourName}</td>
+                        <td class="text-center">
+                          <span class="badge bg-danger fs-6" style="min-width:48px;">${penaltyValue}</span>
+                          ${penaltyDetails}
+                        </td>
+                        <td class="text-start">${pen.reason ? `<span class="text-secondary fst-italic">${pen.reason}</span>` : ""}</td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  document.querySelector('main').innerHTML = `
+    <div class="container">
+      <h2 class="text-center mb-3 fw-bold">${game.Name || "Игра"}</h2>
+      <p class="text-center text-secondary mb-4">В таблице ниже отображаются лучшие участники и их баллы по каждому туру. <br>Ваша строка выделена цветом. <br>Для сортировки по результату нажмите на название тура.</p>
+      ${tableHtml}
+      ${showMoreBtn}
+      <div class="mb-4">
+        ${toursHtml}
+      </div>
+      ${penaltiesBlock}
+      <div id="appealsBtnBlock" class="my-4 text-center">
+        ${
+          localStorage.getItem('chgk_appeals_enabled') === '1'
+            ? `<button class="btn btn-info fw-bold btn-lg" id="openAppealsBtn">АППЕЛЯЦИИ</button>`
+            : ''
+        }
+      </div>
+      <div id="tourModalContainer"></div>
+      <div id="allResultsModalContainer"></div>
+    </div>
+  `;
+
+  // Обработчик перехода на страницу аппеляций (только если кнопка есть)
+  const appealsBtn = document.getElementById('openAppealsBtn');
+  if (appealsBtn) {
+    appealsBtn.onclick = () => {
+      window.location.href = `appeals.html?game=${encodeURIComponent(gameId)}&uid=${encodeURIComponent(auth.currentUser.uid)}`;
+    };
+  }
+
+  // Сортировка
+  document.querySelectorAll('#resultsTable th[data-sort]').forEach(th => {
+    th.onclick = () => {
+      const sortKey = th.dataset.sort;
+      const rows = Array.from(document.querySelectorAll('#resultsTable tbody tr'));
+      rows.sort((a, b) => {
+        if (sortKey === 'name') {
+          return a.cells[1].textContent.localeCompare(b.cells[1].textContent, 'ru', { sensitivity: 'base' });
+        } else if (sortKey === 'total') {
+          // Сортировка по итоговому баллу после штрафа (берём только число из первого div)
+          const getTotal = (row) => {
+            const cell = row.cells[row.cells.length - 1];
+            const div = cell.querySelector('div');
+            return div ? Number(div.textContent) : 0;
+          };
+          return getTotal(b) - getTotal(a);
+        } else if (sortKey.startsWith('tour')) {
+          // Сортировка по баллам тура после штрафа (берём только число из первого div)
+          const idx = Number(sortKey.replace('tour', '')) + 2;
+          const getTour = (row) => {
+            const cell = row.cells[idx];
+            const div = cell.querySelector('div');
+            return div ? Number(div.textContent) : 0;
+          };
+          return getTour(b) - getTour(a);
+        } else if (sortKey === 'place') {
+          return Number(a.cells[0].textContent) - Number(b.cells[0].textContent);
+        }
+        return 0;
+      });
+      const tbody = document.querySelector('#resultsTable tbody');
+      rows.forEach(r => tbody.appendChild(r));
+    };
+  });
+
+  // Кнопки туров
+  document.querySelectorAll('button[data-tour]').forEach(btn => {
+    btn.onclick = () => openTourModal(btn.dataset.tour);
+  });
+
+    // Кнопки "Мои ответы"
+  document.querySelectorAll('button[data-my-answers]').forEach(btn => {
+    btn.onclick = async () => {
+      const tourId = btn.dataset.myAnswers;
+      const questions = Array.isArray(tours[tourId]?.questions) ? tours[tourId].questions : [];
+      const userResultSnap = await get(ref(db, `apps/chgk/games/${gameId}/results/${currentUid}/${tourId}`));
+      const answers = userResultSnap.exists() && Array.isArray(userResultSnap.val().answers)
+        ? userResultSnap.val().answers : [];
+      const points = userResultSnap.exists() && Array.isArray(userResultSnap.val().points)
+        ? userResultSnap.val().points : [];
+      let modalHtml = `
+  <div class="modal fade" id="myAnswersModal" tabindex="-1" aria-labelledby="myAnswersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title" id="myAnswersModalLabel">Ваши ответы — ${tours[tourId]?.name || tourId}</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          ${questions.map((q, i) => {
+            const userAns = (answers[i] || "").trim();
+            const rightAns = (q.answer || "").trim();
+            const isCorrect = points[i] === 1;
+            return `
+              <div class="mb-3 row align-items-center">
+                <label class="col-2 col-form-label text-end fs-5 fw-semibold">${i + 1}</label>
+                <div class="col-10">
+                  <input type="text" class="form-control form-control-lg ${isCorrect ? 'is-valid' : 'is-invalid'}" value="${userAns}" readonly>
+                  ${isCorrect ? `<div class="valid-feedback mt-1">Верно!</div>` : (userAns ? `<div class="invalid-feedback mt-1">Правильный ответ: <b>${rightAns}</b></div>` : "")}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+    `;
+    const container = document.getElementById('allResultsModalContainer');
+    container.innerHTML = modalHtml;
+    const modal = new bootstrap.Modal(document.getElementById('myAnswersModal'));
+    modal.show();
+  };
+});
+  // Модалка для ответов
+  async function openTourModal(tourId) {
+    const questions = Array.isArray(tours[tourId]?.questions) ? tours[tourId].questions : [];
+    // Проверка: уже отправлял?
+    const userResultSnap = await get(ref(db, `apps/chgk/games/${gameId}/results/${currentUid}/${tourId}`));
+    let alreadySent = userResultSnap.exists() && Array.isArray(userResultSnap.val().answers);
+
+    let modalHtml = `
+<div class="modal fade" id="tourModal" tabindex="-1" aria-labelledby="tourModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="tourModalLabel">Ответы на вопросы — ${tours[tourId]?.name || tourId}</h5>
+        
+  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+
+      </div>
+      <div class="modal-body">
+        ${alreadySent ? `
+          <div class="alert alert-success text-center mb-0">
+            Вы уже отправили ответы на этот тур.<br>
+            Повторная отправка невозможна.
+          </div>
+        ` : `
+          <form id="tourAnswersForm">
+            ${questions.map((q, i) => `
+              <div class="mb-3 row align-items-center">
+                <label class="col-2 col-form-label text-end fs-5 fw-semibold">${i + 1}</label>
+                <div class="col-10">
+                  <input type="text" class="form-control form-control-lg" name="q${i}" autocomplete="off" placeholder="Ваш ответ на вопрос №${i+1}" required>
+                </div>
+              </div>
+            `).join('')}
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow">Отправить ответы</button>
+            </div>
+          </form>
+        `}
+      </div>
+    </div>
+  </div>
+</div>
+  `;
+  const container = document.getElementById('tourModalContainer');
+  container.innerHTML = modalHtml;
+  // Важно: делаем модалку некликабельной вне и не закрываемой по Esc, если ответы не отправлены
+  const modalOptions = alreadySent ? {} : { backdrop: 'static', keyboard: false };
+  const modal = new bootstrap.Modal(document.getElementById('tourModal'), modalOptions);
+  modal.show();
+
+  if (!alreadySent) {
+    const modalEl = document.getElementById('tourModal');
+    // Счётчик попыток закрытия и таймер
+    let closeAttempts = 0;
+    let closeTimer = null;
+
+    modalEl.addEventListener('hide.bs.modal', function (e) {
+      if (!modalEl.dataset.submitted) {
+        closeAttempts++;
+        if (closeAttempts === 1) {
+          closeTimer = setTimeout(() => { closeAttempts = 0; }, 2000);
+        }
+        if (closeAttempts < 3) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          appendAlert(`Сначала отправьте ответы, чтобы закрыть окно! (${closeAttempts}/3)`, "warning");
+          return false;
+        } else {
+          // На 3-й раз за 2 секунды — разрешаем закрытие
+          closeAttempts = 0;
+          if (closeTimer) clearTimeout(closeTimer);
+        }
+      }
+    });
+
+    document.getElementById('tourAnswersForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const answers = questions.map((_, i) => form[`q${i}`].value.trim());
+      await set(ref(db, `apps/chgk/games/${gameId}/results/${currentUid}/${tourId}`), {
+        answers,
+        points: 0 // Очки выставит админ или автопроверка
+      });
+      modalEl.dataset.submitted = "1";
+      document.body.classList.remove('modal-open');
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+      modal.hide();
+      appendAlert("Ответы отправлены!", "success");
+      loadGameResults();
+    };
+  }
+}
+}
+
+// 3. Автообновление: слушаем изменения в базе и перерисовываем страницу
+// УБРАНО автообновление страницы по onValue
+// const gameRef = ref(db, `apps/chgk/games/${gameId}`);
+// let firstLoad = true;
+// onValue(gameRef, async () => {
+//   if (firstLoad) {
+//     firstLoad = false;
+//     return; // не обновляем при первом срабатывании, т.к. уже вызвали loadGameResults()
+//   }
+//   await loadGameResults();
+// });
+
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,1214 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ARTEnet | Что? Где? Когда?</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+      .bd-mode-toggle .dropdown-menu .active .bi {
+        display: block !important;
+      }
+
+      html, body {
+        height: 100%;
+        min-height: 100vh;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      main {
+        flex: 1 0 auto;
+        padding-top: 56px;
+      }
+      footer {
+        flex-shrink: 0;
+      }
+
+      .black{
+        color:rgba(0, 0, 0, 0.803);
+        background-color: rgba(97, 97, 97, 0.325);
+        border-radius: 10px;
+      }
+
+
+      .bg-account {
+        background: #e3f2fd !important; /* голубой */
+      }
+      .bg-nextgame {
+        background: #ebe8f5 !important; /* светло-зелёный */
+      }
+      .bg-join {
+        background: #e8f5e9 !important; /* светло-зелёный */
+      }
+      .bg-achievements {
+        background: #fff3e0 !important; /* светло-оранжевый */
+      }
+      .bg-history {
+        background: #fce4ec !important; /* светло-розовый */
+      }
+
+      #liveAlertPlaceholder {
+        position: fixed;
+        top: 70px; /* чуть ниже navbar */
+        left: 0;
+        right: 0;
+        z-index: 2000;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #liveAlertPlaceholder .alert {
+        pointer-events: auto;
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body class="d-flex flex-column min-vh-100 p-0 m-0 border-0 bd-example">
+    <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="../chgk.html">
+          <img src="../../photos/logo-color-2.png" alt="ARTEnet" height="30" class="d-inline-block align-text-top">
+          <img src="../../photos/chgk-logo.jpg" alt="ЧГК" height="30" class="d-inline-block align-text-top">
+          Что? Где? Когда? | Администратор
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="../../main.html">Главное</a>
+            </li>
+          <small>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Больше информации об общей игре -->
+    <div class="modal fade" id="nextGameInfoModal" tabindex="-1" aria-labelledby="nextGameInfoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0 pb-0">
+            <h4 class="modal-title w-100 text-center" id="nextGameInfoModalLabel">Летний турнир</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body pt-2">
+            <div class="mb-3 text-center fs-5">
+              <div class="mb-2">
+                <strong>Дата и время:</strong>
+                <span id="nextGameInfoDate" class="fw-semibold">Сегодня, 20:00</span>
+              </div>
+              <div class="mb-2">
+                <strong>Код для подключения к игре:</strong>
+                <span id="nextGameInfoCode" class="fw-semibold">ABC123</span>
+              </div>
+            </div>
+            <div class="d-grid gap-2 mb-4">
+              <a href="#" class="btn btn-outline-primary w-100" id="joinConferenceBtn" target="_blank">
+                Подключиться к конференции
+              </a>
+              <button type="button" class="btn btn-success w-100" id="joinGameFromModalBtn">
+                Я участвую!
+              </button>
+            </div>
+            <h6 class="text-center mb-2">Участники</h6>
+            <div class="table-responsive">
+              <table class="table table-bordered table-sm mb-0 text-center align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 45%;">Имя</th>
+                    <th style="width: 50%;">Email</th>
+                  </tr>
+                </thead>
+                <tbody id="nextGameParticipants">
+                  <tr><td colspan="3">Пока никто не участвует</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="liveAlertPlaceholder" role="alert"></div>
+
+    <div class="modal fade" id="noChgkModal" tabindex="-1" aria-labelledby="noChgkModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header border-0">
+            <h5 class="modal-title w-100" id="noChgkModalLabel">Нет доступа</h5>
+          </div>
+          <div class="modal-body">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10rem" height="10rem" fill="currentColor" class="bi bi-emoji-astonished mb-2" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+              <path d="M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5m4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5M4.884 4.022a2 2 0 0 1 1.458-.048.5.5 0 0 0 .316-.948 3 3 0 0 0-2.167.077 3.1 3.1 0 0 0-.773.478q-.036.03-.07.064l-.002.001a.5.5 0 0 0 .707.708l-.001.002.001-.002a2 2 0 0 1 .122-.1 2 2 0 0 1 .41-.232Zm6.232 0a2 2 0 0 0-1.458-.048.5.5 0 1 1-.316-.948 3 3 0 0 1 2.168.077 3 3 0 0 1 .773.478l.07.064v.001a.5.5 0 0 1-.706.708l.002.002-.002-.002a2 2 0 0 0-.122-.1 2 2 0 0 0-.41-.232ZM8 10c-.998 0-1.747.623-2.247 1.246-.383.478.08 1.06.687.98q1.56-.202 3.12 0c.606.08 1.07-.502.687-.98C9.747 10.623 8.998 10 8 10"/>
+            </svg>
+            <p class="mb-1 h5">У вас нет доступа этому к приложению.<br></p>
+            <p class="mb-3 leaad"><i>Если считаете, что это ошибка, обратитесь в <a href="mailto:ltartenet@gmail.com">поддержку</a>.</i></p>
+            <div class="progress mb-1" style="height: 0.5rem;">
+              <div id="noChgkProgress" class="progress-bar bg-danger" role="progressbar" style="width: 0%; transition: width 10s linear;"></div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center border-0">
+            <div class="w-100 px-3">
+              <button type="button" class="btn btn-danger w-100 py-2" id="noAccessBtn">Вернуться назад</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="blockedModal" tabindex="-1" aria-labelledby="blockedModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+          <div class="modal-header border-0">
+            <h5 class="modal-title w-100" id="blockedModalLabel">Доступ заблокирован</h5>
+          </div>
+          <div class="modal-body">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10rem" height="10rem" fill="currentColor" class="bi bi-exclamation-triangle mb-2" viewBox="0 0 16 16">
+              <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+              <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+            </svg>
+            <p class="mb-1 h5">Ваш аккаунт заблокирован.<br></p>
+            <p class="mb-3 leaad"><i>Обратитесь в <a href="mailto:ltartenet@gmail.com">поддержку</a> для выяснения причин.</i></p>
+            <div class="progress" style="height: 0.5rem;">
+              <div id="blockedProgress" class="progress-bar bg-danger" role="progressbar" style="width: 100%; transition: width 10s linear;"></div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-center border-0">
+            <div class="w-100 px-3">
+              <button type="button" class="btn btn-danger w-100 py-2" id="blockedBackBtn">Выйти</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center">
+      <div class="container py-4">
+        <div class="container text-center mb-4">
+          <h1 class="display-4 mb-2">Панель администратора ЧГК</h1>
+          <p class="lead mb-0">Управление играми и пользователями</p>
+        </div>
+        <div id="admin-panel" style="display:none;">
+          <div class="row g-4">
+            <!-- Управление играми -->
+            <div class="col-lg-6">
+              <div class="p-4 rounded-4 shadow-sm h-100 bg-nextgame">
+                <h5 class="mb-3">Игры</h5>
+                <button class="btn btn-primary mb-3" id="createGameBtn">Создать новую игру</button>
+                <div id="games-list">
+                  <div class="text-secondary">Загрузка игр...</div>
+                </div>
+              </div>
+            </div>
+            <!-- Управление пользователями -->
+            <div class="col-lg-6">
+              <div class="p-4 rounded-4 shadow-sm h-100 bg-account">
+                <h5 class="mb-3">Пользователи</h5>
+                <div id="users-list">
+                  <div class="text-secondary">Загрузка пользователей...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Модалка создания/редактирования игры -->
+          <div class="modal fade" id="gameModal" tabindex="-1" aria-labelledby="gameModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <form id="gameForm">
+                  <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title w-100 text-center" id="gameModalLabel">Создать/Редактировать игру</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                  </div>
+                  <div class="modal-body pt-2">
+                    <input type="hidden" id="gameId">
+                    <div class="mb-3">
+                      <label class="form-label">Название</label>
+                      <input type="text" class="form-control" id="gameName" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Дата и время</label>
+                      <input type="datetime-local" class="form-control" id="gameDate" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Код игры</label>
+                      <input type="text" class="form-control" id="gameCode">
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Ссылка на конференцию</label>
+                      <input type="url" class="form-control" id="gameConference">
+                    </div>
+                    <div class="form-check mb-3">
+                      <input class="form-check-input" type="checkbox" id="gameIsNext">
+                      <label class="form-check-label" for="gameIsNext">Сделать следующей игрой</label>
+                    </div>
+                  </div>
+                  <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. МОДАЛКА участников (добавьте в конец <body> или сразу после других модалок) -->
+          <div class="modal fade" id="participantsModal" tabindex="-1" aria-labelledby="participantsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                  <h5 class="modal-title w-100 text-center" id="participantsModalLabel">Участники игры</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body pt-2">
+                  <div class="table-responsive">
+                    <table class="table table-bordered table-sm mb-0 text-center align-middle">
+                      <thead class="table-light">
+                        <tr>
+                          <th style="width: 5%;">#</th>
+                          <th style="width: 45%;">Имя</th>
+                          <th style="width: 45%;">Email</th>
+                          <th style="width: 5%;">Действие</th>
+                        </tr>
+                      </thead>
+                      <tbody id="participantsModalTable">
+                        <tr><td colspan="4">Пока никто не участвует</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Модалка редактирования пользователя -->
+          <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <form id="userForm">
+                  <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title w-100 text-center" id="userModalLabel">Редактировать пользователя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                  </div>
+                  <div class="modal-body pt-2">
+                    <input type="hidden" id="editUserId">
+                    <div class="mb-3">
+                      <label class="form-label">Имя</label>
+                      <input type="text" class="form-control" id="editUserName" readonly>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Email</label>
+                      <input type="text" class="form-control" id="editUserEmail" readonly>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Достижения</label>
+                      <div class="input-group mb-1">
+                        <span class="input-group-text">🥇</span>
+                        <input type="number" min="0" class="form-control" id="ach1" placeholder="1 место">
+                        <span class="input-group-text">🥈</span>
+                        <input type="number" min="0" class="form-control" id="ach2" placeholder="2 место">
+                        <span class="input-group-text">🥉</span>
+                        <input type="number" min="0" class="form-control" id="ach3" placeholder="3 место">
+                      </div>
+                    </div>
+                    <!-- Внутри модалки пользователя -->
+                    <div class="mb-3">
+                      <label class="form-label">История игр и мест</label>
+                      <div id="userHistoryEditor"></div>
+                      <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="addHistoryRowBtn">Добавить запись</button>
+                    </div>
+                  </div>
+                  <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  
+    <footer class="bg-body-tertiary text-center text-lg-start mt-4 border-top">
+      <div class="container p-3">
+        <div class="row align-items-center">
+          <div class="col-lg-6 text-lg-start text-center mb-2 mb-lg-0">
+            <span class="fw-bold">ARTEnet &copy; 2025</span>
+          </div>
+          <div class="col-lg-6 text-lg-end text-center">
+            <a href="mailto:ltartenet@gmail.com" class="text-decoration-none text-secondary me-3">Поддержка</a>
+            <a href="#" class="text-decoration-none text-secondary disabled">Политика конфиденциальности</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  <!--    FIREBASE    -->
+  <script src="../../js/alerts.js"></script> <!-- appendAlert -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+    import { getDatabase, ref, get, set, update, remove, push } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+      authDomain: "artenetshop-7b884.firebaseapp.com",
+      projectId: "artenetshop-7b884",
+      storageBucket: "artenetshop-7b884.appspot.com",
+      messagingSenderId: "542098227452",
+      appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+      measurementId: "G-8PDLBR77YN",
+      databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const analytics = getAnalytics(app);
+    const user = sessionStorage.getItem('isLoggedIn');
+    const db = getDatabase(app);
+
+    window._chgkTourQuestions = {};
+
+    // Модалка для полной истории игр
+    const fullHistoryModalHtml = `
+      <div class="modal fade" id="fullHistoryModal" tabindex="-1" aria-labelledby="fullHistoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+              <h5 class="modal-title w-100 text-center" id="fullHistoryModalLabel">Вся история игр</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body pt-2">
+              <ul class="list-unstyled mb-0" id="full-games-history-list">
+                <li>Загрузка...</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', fullHistoryModalHtml);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user || !user.emailVerified) {
+        window.location.href = "../index.html";
+        return;
+      }
+      // Получаем userDbSnap!
+      const userDbSnap = await get(ref(db, `users/${user.uid}`));
+
+      // Проверка на администратора
+      const adminSnap = await get(ref(db, `users/${user.uid}/isAdmin`));
+      if (!adminSnap.exists() || !adminSnap.val()) {
+        alert("Доступ только для администратора!");
+        window.location.href = "../../main.html";
+        return;
+      }
+      document.getElementById('admin-panel').style.display = "";
+
+      loadUsers();
+      loadGames();
+
+      // --- СОЗДАТЬ/РЕДАКТИРОВАТЬ ИГРУ ---
+      document.getElementById('createGameBtn').onclick = () => {
+        document.getElementById('gameId').value = "";
+        document.getElementById('gameName').value = "";
+        document.getElementById('gameDate').value = "";
+        document.getElementById('gameCode').value = "";
+        document.getElementById('gameConference').value = "";
+        document.getElementById('gameIsNext').checked = false;
+        new bootstrap.Modal(document.getElementById('gameModal')).show();
+      };
+
+      window.editGame = async (gid) => {
+        const snap = await get(ref(db, `apps/chgk/games/${gid}`));
+        if (!snap.exists()) return;
+        const g = snap.val();
+        document.getElementById('gameId').value = gid;
+        document.getElementById('gameName').value = g.Name || "";
+        document.getElementById('gameDate').value = g.startAt ? new Date(g.startAt).toISOString().slice(0,16) : "";
+        document.getElementById('gameCode').value = g.code || "";
+        document.getElementById('gameConference').value = g.conference || "";
+        document.getElementById('gameIsNext').checked = !!g.isNext;
+        new bootstrap.Modal(document.getElementById('gameModal')).show();
+      };
+
+      window.deleteGame = async (gid) => {
+        if (confirm("Удалить игру?")) {
+          await remove(ref(db, `apps/chgk/games/${gid}`));
+          loadGames();
+        }
+      };
+
+      document.getElementById('gameForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const gid = document.getElementById('gameId').value;
+        const data = {
+          Name: document.getElementById('gameName').value,
+          startAt: document.getElementById('gameDate').value ? new Date(document.getElementById('gameDate').value).toISOString() : "",
+          date: document.getElementById('gameDate').value ? new Date(document.getElementById('gameDate').value).toLocaleString("ru-RU") : "",
+          code: document.getElementById('gameCode').value,
+          conference: document.getElementById('gameConference').value,
+          isNext: document.getElementById('gameIsNext').checked
+        };
+        // Если отмечена как следующая, сбросить isNext у других
+        if (data.isNext) {
+          const gamesSnap = await get(ref(db, "apps/chgk/games"));
+          if (gamesSnap.exists()) {
+            for (const [otherId, g] of Object.entries(gamesSnap.val())) {
+              if (otherId !== gid && g.isNext) {
+                await update(ref(db, `apps/chgk/games/${otherId}`), { isNext: false });
+              }
+            }
+          }
+        }
+        if (gid) {
+          await update(ref(db, `apps/chgk/games/${gid}`), data);
+        } else {
+          await push(ref(db, "apps/chgk/games"), data);
+        }
+        bootstrap.Modal.getInstance(document.getElementById('gameModal')).hide();
+        loadGames();
+      };
+
+      // 1. Проверка блокировки пользователя
+      if (userDbSnap.exists() && userDbSnap.val().blocked) {
+        const blockedModalEl = document.getElementById('blockedModal');
+        const blockedModal = new bootstrap.Modal(blocklockedModalEl, { backdrop: 'static', keyboard: false });
+        const progressBar = document.getElementById('blockedProgress');
+        let timer;
+
+        progressBar.classList.remove("bg-secondary", "bg-success", "bg-warning");
+        progressBar.classList.add("bg-danger");
+        progressBar.style.transition = "none";
+        progressBar.style.width = "0%";
+
+        // ВАЖНО: анимация только после показа модалки!
+        blockedModalEl.addEventListener('shown.bs.modal', () => {
+          setTimeout(() => {
+            progressBar.style.transition = "width 10s linear";
+            progressBar.style.width = "100%";
+          }, 50);
+        }, { once: true });
+
+        document.getElementById("blockedBackBtn").onclick = async () => {
+          clearTimeout(timer);
+          blockedModal.hide();
+          await signOut(auth);
+          window.location.href = "../index.html";
+        };
+
+        timer = setTimeout(async () => {
+          blockedModal.hide();
+          await signOut(auth);
+          window.location.href = "../index.html";
+        }, 10000);
+
+        blockedModal.show();
+        return;
+      }
+
+      // 2. Проверка доступа к ЧГК
+      const apps = userDbSnap.exists() && userDbSnap.val().apps;
+      if (!apps || apps.chgk !== true) {
+        const modalEl = document.getElementById('noChgkModal');
+      const progressBar = document.getElementById('noChgkProgress');
+      const modal = new bootstrap.Modal(modalEl, { backdrop: 'static', keyboard: false });
+
+      progressBar.style.transition = "none";
+      progressBar.style.width = "0%";
+      modalEl.addEventListener('shown.bs.modal', () => {
+        setTimeout(() => {
+          progressBar.style.transition = "width 10s linear";
+          progressBar.style.width = "100%";
+        }, 50);
+      }, { once: true });
+
+      modal.show();
+
+      setTimeout(() => {
+        modal.hide();
+        window.location.href = "../main.html";
+      }, 10000);
+
+        return;
+      }
+      // --- Пользователи ---
+async function loadUsers() {
+  // Получаем пользователей из apps/chgk/userData и имена из users
+  const chgkUsersSnap = await get(ref(db, "apps/chgk/userData"));
+  const allUsersSnap = await get(ref(db, "users"));
+  const usersList = document.getElementById('users-list');
+  if (!chgkUsersSnap.exists()) {
+    usersList.innerHTML = "<div>Нет пользователей</div>";
+    return;
+  }
+  const allUsers = allUsersSnap.exists() ? allUsersSnap.val() : {};
+  const users = Object.entries(chgkUsersSnap.val());
+  if (users.length === 0) {
+    usersList.innerHTML = "<div>Нет пользователей</div>";
+    return;
+  }
+  usersList.innerHTML = users.map(([uid, u]) => `
+    <div class="card mb-2">
+      <div class="card-body">
+        <b>${allUsers[uid]?.username || "Без имени"}</b> <span class="text-secondary">${uid}</span>
+        <div class="mt-2">
+          <button class="btn btn-sm btn-outline-primary me-2" onclick="window.editUser('${uid}')">Редактировать</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.editUser = async (uid) => {
+  const snap = await get(ref(db, `apps/chgk/userData/${uid}`));
+  const userSnap = await get(ref(db, `users/${uid}`));
+  let u = {};
+  if (snap.exists()) u = snap.val();
+  const username = userSnap.exists() ? userSnap.val().username : "";
+  const email = userSnap.exists() ? userSnap.val().email : "";
+
+  document.getElementById('editUserId').value = uid;
+  document.getElementById('editUserName').value = username;
+  document.getElementById('editUserEmail').value = email;
+
+  // --- Исправленная обработка достижений ---
+  let achievements = u.achievments ?? u.achievements ?? {};
+  if (typeof achievements === "string") {
+    try { achievements = JSON.parse(achievements); } catch { achievements = {}; }
+  }
+  // Если массив — преобразуем к объекту
+  if (Array.isArray(achievements)) {
+    achievements = {
+      "1": Number(achievements[1]) || 0,
+      "2": Number(achievements[2]) || 0,
+      "3": Number(achievements[3]) || 0
+    };
+  }
+  document.getElementById('ach1').value = achievements["1"] ?? 0;
+  document.getElementById('ach2').value = achievements["2"] ?? 0;
+  document.getElementById('ach3').value = achievements["3"] ?? 0;
+
+  // Список игр (history, только просмотр)
+  const history = u.history ? Object.values(u.history) : [];
+  const histDiv = document.getElementById('userHistoryEditor');
+  histDiv.innerHTML = history.length
+    ? history.map((h, idx) => `
+      <div class="input-group mb-1" data-hist-idx="${idx}">
+        <input type="text" class="form-control form-control-sm" value="${h.gameName || ""}" placeholder="Игра" readonly>
+        <input type="date" class="form-control form-control-sm" value="${h.date ? new Date(h.date).toISOString().slice(0,10) : ""}" placeholder="Дата" readonly>
+        <input type="text" class="form-control form-control-sm" value="${h.place || ""}" placeholder="Место" readonly>
+      </div>
+    `).join('')
+    : '<div class="text-secondary">Нет сыгранных игр</div>';
+
+  document.getElementById('addHistoryRowBtn').style.display = 'none';
+  new bootstrap.Modal(document.getElementById('userModal')).show();
+};
+
+document.getElementById('userForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const uid = document.getElementById('editUserId').value;
+  // Имя и email не меняем!
+  const achievments = {
+    "1": Number(document.getElementById('ach1').value) || 0,
+    "2": Number(document.getElementById('ach2').value) || 0,
+    "3": Number(document.getElementById('ach3').value) || 0
+  };
+  await update(ref(db, `apps/chgk/userData/${uid}`), { achievments });
+  bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+  loadUsers();
+};
+
+// --- Игры ---
+async function loadGames() {
+  const gamesSnap = await get(ref(db, "apps/chgk/games"));
+  const gamesList = document.getElementById('games-list');
+  if (!gamesSnap.exists()) {
+    gamesList.innerHTML = "<div>Нет игр</div>";
+    return;
+  }
+  const games = Object.entries(gamesSnap.val());
+  gamesList.innerHTML = games.map(([gid, g]) => {
+      // Преобразуем дату в локальное время пользователя
+      let localDate = "";
+      if (g.startAt) {
+        try {
+          localDate = new Date(g.startAt).toLocaleString(undefined, {
+            dateStyle: "medium",
+            timeStyle: "short"
+          });
+        } catch {
+          localDate = g.date || "";
+        }
+      } else {
+        localDate = g.date || "";
+      }
+      return `
+        <div class="card mb-2">
+          <div class="card-body">
+            <b>${g.Name || "Без названия"}</b> <span class="text-secondary">${localDate}</span>
+            ${g.isNext ? '<span class="badge bg-success ms-2">Следующая</span>' : ""}
+            <div class="mt-2 d-flex flex-wrap gap-2">
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Действия
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#" onclick="window.open('chgk-presentation.html?game=${gid}','_blank')">Режим презентации</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="window.editGame('${gid}')">Редактировать игру</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="window.open('chgk-answers.html?game=${gid}','_blank')">Проверка ответов</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="window.editTours('${gid}')">Редактировать туры и вопросы</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item text-danger" href="#" onclick="window.deleteGame('${gid}')">Удалить</a></li>
+                </ul>
+              </div>
+              <button class="btn btn-sm btn-outline-danger" onclick="window.showCloseGameModal('${gid}')">Закрыть игру</button>
+              <button class="btn btn-sm btn-outline-primary" onclick="window.showParticipantsModal('${gid}')">Участники игры</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+}
+
+// 2. Модалка закрытия игры (добавьте в конец <body>)
+const closeGameModalHtml = `
+  <div class="modal fade" id="closeGameModal" tabindex="-1" aria-labelledby="closeGameModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title w-100 text-center" id="closeGameModalLabel">Завершить игру</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body pt-2">
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm mb-0 text-center align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Место</th>
+                  <th>Имя</th>
+                  <th>Email</th>
+                  <th>Очки</th>
+                  <th>Рейтинг</th>
+                </tr>
+              </thead>
+              <tbody id="closeGameResultsTable">
+                <tr><td colspan="5">Загрузка...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-danger w-100" id="finishGameBtn">Закончить игру</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+document.body.insertAdjacentHTML('beforeend', closeGameModalHtml);
+
+// 1. Добавляем кнопку "Закрыть игру" в список игр
+async function loadGames() {
+  const gamesSnap = await get(ref(db, "apps/chgk/games"));
+  const gamesList = document.getElementById('games-list');
+  if (!gamesSnap.exists()) {
+    gamesList.innerHTML = "<div>Нет игр</div>";
+    return;
+  }
+  const games = Object.entries(gamesSnap.val());
+  gamesList.innerHTML = games.map(([gid, g]) => `
+    <div class="card mb-2">
+      <div class="card-body">
+        <b>${g.Name || "Без названия"}</b> <span class="text-secondary">${g.date || ""}</span>
+        ${g.isNext ? '<span class="badge bg-success ms-2">Следующая</span>' : ""}
+        <div class="mt-2 d-flex flex-wrap gap-2">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Действия
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" onclick="window.open('chgk-presentation.html?game=${gid}','_blank')">Режим презентации</a></li>
+              <li><a class="dropdown-item" href="#" onclick="window.editGame('${gid}')">Редактировать игру</a></li>
+              <li><a class="dropdown-item" href="#" onclick="window.open('chgk-answers.html?game=${gid}','_blank')">Проверка ответов</a></li>
+              <li><a class="dropdown-item" href="#" onclick="window.editTours('${gid}')">Редактировать туры и вопросы</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#" onclick="window.deleteGame('${gid}')">Удалить</a></li>
+            </ul>
+          </div>
+          <button class="btn btn-sm btn-outline-danger" onclick="window.showCloseGameModal('${gid}')">Закрыть игру</button>
+          <button class="btn btn-sm btn-outline-primary" onclick="window.showParticipantsModal('${gid}')">Участники игры</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// --- Модалка и функции для туров/вопросов: простые кнопки вместо дропдаунов ---
+const toursModalHtml = `
+  <div class="modal fade" id="toursModal" tabindex="-1" aria-labelledby="toursModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title w-100 text-center" id="toursModalLabel">Редактирование туров и вопросов</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body pt-2">
+          <div class="accordion" id="toursEditor"></div>
+          <button class="btn btn-success mt-3" id="saveToursBtn">Сохранить изменения</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+document.body.insertAdjacentHTML('beforeend', toursModalHtml);
+
+// 3. Функция для показа модалки и обработки завершения игры
+window.showCloseGameModal = async (gameId) => {
+  // Получаем участников и их результаты
+  const gameSnap = await get(ref(db, `apps/chgk/games/${gameId}`));
+  if (!gameSnap.exists()) return;
+  const game = gameSnap.val();
+  const participantsSnap = await get(ref(db, `apps/chgk/games/${gameId}/participants`));
+  const usersSnap = await get(ref(db, "users"));
+  const resultsSnap = await get(ref(db, `apps/chgk/games/${gameId}/results`));
+  const users = usersSnap.exists() ? usersSnap.val() : {};
+  const participants = participantsSnap.exists() ? participantsSnap.val() : {};
+  const results = resultsSnap.exists() ? resultsSnap.val() : {};
+
+  // Считаем очки для каждого участника
+  let table = [];
+  for (const uid in participants) {
+    let total = 0;
+    if (results[uid]) {
+      for (const tour of Object.values(results[uid])) {
+        if (Array.isArray(tour.points)) total += tour.points.reduce((a, b) => a + (b || 0), 0);
+      }
+    }
+    table.push({
+      uid,
+      name: users[uid]?.username || participants[uid]?.name || uid,
+      email: users[uid]?.email || participants[uid]?.email || "",
+      total
+    });
+  }
+  // Сортируем по очкам (по убыванию)
+  table.sort((a, b) => b.total - a.total);
+
+  // Проставляем места (с учётом одинаковых очков)
+  let lastScore = null, lastPlace = 0, realPlace = 0;
+  table.forEach((row, i) => {
+    realPlace++;
+    if (row.total !== lastScore) {
+      lastPlace = realPlace;
+      lastScore = row.total;
+    }
+    row.place = lastPlace;
+  });
+
+  // Считаем delta рейтинга для каждого игрока заранее
+  for (const row of table) {
+    const n = table.length;
+    const m = row.place;
+    row.ratingDelta = (n > 0 && m > 0)
+      ? Math.round((20 * n) / m - (20 * n) / ((2 / 3) * n))
+      : 0;
+    const ratingRef = ref(db, `apps/chgk/userData/${row.uid}/rating`);
+    const ratingSnap = await get(ratingRef);
+    row.rating = ratingSnap.exists() && !isNaN(ratingSnap.val()) ? Number(ratingSnap.val()) : 100;
+  }
+
+  // Рендерим таблицу с рейтингом и начислением
+  const tbody = document.getElementById('closeGameResultsTable');
+  tbody.innerHTML = table.length
+    ? table.map(r => `
+      <tr>
+        <td>${r.place}</td>
+        <td>${r.name}</td>
+        <td>${r.email}</td>
+        <td>${r.total}</td>
+        <td>
+          <span>${r.rating}</span>
+          <span class="${r.ratingDelta > 0 ? 'text-success' : (r.ratingDelta < 0 ? 'text-danger' : 'text-secondary')} ms-2">
+            ${r.ratingDelta > 0 ? '+' : ''}${r.ratingDelta}
+          </span>
+        </td>
+      </tr>
+    `).join('')
+    : `<tr><td colspan="5">Нет участников</td></tr>`;
+
+  // Кнопка "Закончить игру"
+  document.getElementById('finishGameBtn').onclick = async () => {
+    if (!confirm("Завершить игру? Это действие необратимо.")) return;
+    for (const row of table) {
+      // История теперь хранится в apps/chgk/userData/{uid}/history
+      const histRef = ref(db, `apps/chgk/userData/${row.uid}/history`);
+      const histSnap = await get(histRef);
+      let history = histSnap.exists() ? histSnap.val() : [];
+      if (!Array.isArray(history)) history = [];
+      // --- Рейтинг ---
+      const n = table.length;
+      const m = row.place;
+      let delta = 0;
+      if (n > 0 && m > 0) {
+        delta = Math.round((20 * n) / m - (20 * n) / ((2 / 3) * n));
+      }
+      // Получаем текущий рейтинг
+      const ratingRef = ref(db, `apps/chgk/userData/${row.uid}/rating`);
+      const ratingSnap = await get(ratingRef);
+      let rating = ratingSnap.exists() && !isNaN(ratingSnap.val()) ? Number(ratingSnap.val()) : 100;
+      rating += delta;
+      await set(ratingRef, rating);
+
+      // Записываем историю с рейтингом
+      history.push({
+        gameId,
+        gameName: game.Name || "",
+        date: game.startAt || new Date().toISOString(),
+        place: row.place,
+        players: n,
+        ratingDelta: delta
+      });
+      await set(histRef, history);
+
+      // Достижения
+      if ([1,2,3].includes(row.place)) {
+        const achRef = ref(db, `apps/chgk/userData/${row.uid}/achievments/${row.place}`);
+        const achSnap = await get(achRef);
+        const prev = achSnap.exists() ? Number(achSnap.val()) : 0;
+        await set(achRef, prev + 1);
+      }
+    }
+    // 2. Удалить игру из базы
+    await remove(ref(db, `apps/chgk/games/${gameId}`));
+    bootstrap.Modal.getInstance(document.getElementById('closeGameModal')).hide();
+    appendAlert("Игра завершена и удалена.", "success");
+    loadGames();
+  };
+
+  new bootstrap.Modal(document.getElementById('closeGameModal')).show();
+};
+
+window.editTours = async (gameId) => {
+  const toursRef = ref(db, `apps/chgk/games/${gameId}/tours`);
+  const toursSnap = await get(toursRef);
+  let tours = toursSnap.exists() ? toursSnap.val() : {};
+  window._chgkTourQuestions = {}; // <--- сбросить/инициализировать
+
+  const container = document.getElementById('toursEditor');
+  let html = "";
+  Object.entries(tours).forEach(([tourId, tour]) => {
+    window._chgkTourQuestions[tourId] = Array.isArray(tour.questions) ? tour.questions.slice() : [];
+    html += `
+      <div class="accordion-item" data-tour-id="${tourId}">
+        <h2 class="accordion-header" id="heading${tourId}">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${tourId}" aria-expanded="false" aria-controls="collapse${tourId}">
+            <input class="form-control form-control-sm w-50 me-2" value="${tour.name || ""}" placeholder="Название тура">
+          </button>
+          <button class="btn btn-outline-success btn-sm ms-2" onclick="window.addQuestion('${gameId}', '${tourId}')">Добавить вопрос</button>
+          <button class="btn btn-outline-danger btn-sm ms-2" onclick="window.removeTour('${tourId}')">Удалить тур</button>
+        </h2>
+        <div id="collapse${tourId}" class="accordion-collapse collapse" aria-labelledby="heading${tourId}" data-bs-parent="#toursEditor">
+          <div class="accordion-body">
+            <div id="questions-${tourId}">
+              ${window._chgkTourQuestions[tourId].map((q, qidx) => `
+                <div class="border rounded p-2 mb-2" data-question-idx="${qidx}">
+                  <div class="mb-2 row g-2 align-items-center">
+                    <div class="col-md-4">
+                      <input class="form-control form-control-sm mb-1" value="${q.question || ""}" placeholder="Вопрос" onchange="window.updateQuestionField('${tourId}', ${qidx}, 'question', this.value)">
+                    </div>
+                    <div class="col-md-3">
+                      <input class="form-control form-control-sm mb-1" value="${q.answer || ""}" placeholder="Ответ" onchange="window.updateQuestionField('${tourId}', ${qidx}, 'answer', this.value)">
+                    </div>
+                    <div class="col-md-3">
+                      <input class="form-control form-control-sm mb-1" value="${q.image || ""}" placeholder="URL картинки (или загрузите)" onchange="window.updateQuestionField('${tourId}', ${qidx}, 'image', this.value)">
+                      <input type="file" accept="image/*" class="form-control form-control-sm mb-1" onchange="window.uploadTourImage(event, '${gameId}', '${tourId}', ${qidx})">
+                    </div>
+                    <div class="col-md-2">
+                      <button class="btn btn-outline-danger btn-sm" onclick="window.removeQuestion('${tourId}',${qidx})">Удалить вопрос</button>
+                    </div>
+                  </div>
+                  ${q.image ? `<img src="${q.image}" alt="Картинка" style="max-width:120px;max-height:80px;">` : ""}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  html += `<button class="btn btn-outline-primary mt-3" onclick="window.addTour('${gameId}')">Добавить тур</button>`;
+  container.innerHTML = html;
+
+  // Снимаем старый обработчик, если был
+  const saveBtn = document.getElementById('saveToursBtn');
+  const newSaveBtn = saveBtn.cloneNode(true);
+  saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+  newSaveBtn.onclick = async () => {
+    const tourItems = container.querySelectorAll('.accordion-item[data-tour-id]');
+    const newTours = {};
+    tourItems.forEach(card => {
+      const tourId = card.dataset.tourId;
+      const name = card.querySelector('input[placeholder="Название тура"]').value.trim();
+      // Сохраняем только непустые вопросы
+      const questions = (window._chgkTourQuestions[tourId] || []).filter(q =>
+        q.question.trim() || q.answer.trim() || q.image.trim()
+      );
+      newTours[tourId] = { name, questions };
+    });
+    await set(ref(db, `apps/chgk/games/${gameId}/tours`), newTours);
+    appendAlert("Туры и вопросы успешно сохранены!", "success");
+    bootstrap.Modal.getInstance(document.getElementById('toursModal')).hide();
+  };
+
+  new bootstrap.Modal(document.getElementById('toursModal')).show();
+};
+
+window.addTour = (gameId) => {
+  const container = document.getElementById('toursEditor');
+  const newId = "tour_" + Date.now();
+  window._chgkTourQuestions[newId] = [];
+  const div = document.createElement('div');
+  div.className = "accordion-item";
+  div.dataset.tourId = newId;
+  div.innerHTML = `
+    <h2 class="accordion-header" id="heading${newId}">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${newId}" aria-expanded="true" aria-controls="collapse${newId}">
+        <input class="form-control form-control-sm w-50 me-2" value="" placeholder="Название тура">
+      </button>
+      <button class="btn btn-outline-success btn-sm ms-2" onclick="window.addQuestion('${gameId}', '${newId}')">Добавить вопрос</button>
+      <button class="btn btn-outline-danger btn-sm ms-2" onclick="window.removeTour('${newId}')">Удалить тур</button>
+    </h2>
+    <div id="collapse${newId}" class="accordion-collapse collapse show" aria-labelledby="heading${newId}" data-bs-parent="#toursEditor">
+      <div class="accordion-body">
+        <div id="questions-${newId}"></div>
+      </div>
+    </div>
+  `;
+  const addBtn = container.querySelector("button.btn-outline-primary");
+  if (addBtn) {
+    container.insertBefore(div, addBtn);
+  } else {
+    container.appendChild(div);
+  }
+  window.addQuestion(gameId, newId);
+};
+
+window.addQuestion = (gameId, tourId) => {
+  if (!window._chgkTourQuestions[tourId]) window._chgkTourQuestions[tourId] = [];
+  const questions = window._chgkTourQuestions[tourId];
+  if (questions.length >= 100) {
+    alert("В туре не может быть больше 100 вопросов");
+    return;
+  }
+  questions.push({ question: "", answer: "", image: "" });
+  window.renderQuestions(tourId, gameId);
+};
+
+window.removeQuestion = (tourId, idx) => {
+  if (!window._chgkTourQuestions[tourId]) return;
+  window._chgkTourQuestions[tourId].splice(idx, 1);
+  window.renderQuestions(tourId);
+};
+
+window.updateQuestionField = (tourId, idx, field, value) => {
+  if (!window._chgkTourQuestions[tourId]) return;
+  window._chgkTourQuestions[tourId][idx][field] = value;
+};
+
+window.renderQuestions = (tourId, gameId) => {
+  const questionsDiv = document.getElementById(`questions-${tourId}`);
+  if (!questionsDiv) return;
+  const questions = window._chgkTourQuestions[tourId] || [];
+  questionsDiv.innerHTML = questions.map((q, qidx) => `
+    <div class="border rounded p-2 mb-2" data-question-idx="${qidx}">
+      <div class="mb-2 row g-2 align-items-center">
+        <div class="col-md-4">
+          <input class="form-control form-control-sm mb-1" value="${q.question || ""}" placeholder="Вопрос" onchange="window.updateQuestionField('${tourId}', ${qidx}, 'question', this.value)">
+        </div>
+        <div class="col-md-3">
+          <input class="form-control form-control-sm mb-1" value="${q.answer || ""}" placeholder="Ответ" onchange="window.updateQuestionField('${tourId}', ${qidx}, 'answer', this.value)">
+        </div>
+        <div class="col-md-3">
+          <input class="form-control form-control-sm mb-1" value="${q.image || ""}" placeholder="URL картинки (или загрузите)" onchange="window.updateQuestionField('${tourId}', ${qidx}, 'image', this.value)">
+          <input type="file" accept="image/*" class="form-control form-control-sm mb-1" onchange="window.uploadTourImage(event, '${gameId}', '${tourId}', ${qidx})">
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-outline-danger btn-sm" onclick="window.removeQuestion('${tourId}',${qidx})">Удалить вопрос</button>
+        </div>
+      </div>
+      ${q.image ? `<img src="${q.image}" alt="Картинка" style="max-width:120px;max-height:80px;">` : ""}
+    </div>
+  `).join("");
+};
+
+window.uploadTourImage = (event, gameId, tourId, qidx) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    if (!window._chgkTourQuestions[tourId]) return;
+    window._chgkTourQuestions[tourId][qidx].image = e.target.result;
+    window.renderQuestions(tourId, gameId);
+  };
+  reader.readAsDataURL(file);
+};
+
+// --- ДОБАВЬТЕ ЭТУ ФУНКЦИЮ В scripts type="module" ---
+window.removeParticipant = async (gameId, uid) => {
+  if (!confirm("Удалить этого участника из игры?")) return;
+  // Удаляем участника из списка участников игры
+  await remove(ref(db, `apps/chgk/games/${gameId}/participants/${uid}`));
+  // Обновляем список участников в модалке
+  loadParticipants(gameId);
+};
+
+// --- ДОБАВЬТЕ/ИЗМЕНИТЕ функцию для отображения участников ---
+async function loadParticipants(gameId) {
+  const participantsSnap = await get(ref(db, `apps/chgk/games/${gameId}/participants`));
+  const usersSnap = await get(ref(db, "users"));
+  const tbody = document.getElementById('nextGameParticipants');
+  if (!tbody) return;
+  if (!participantsSnap.exists()) {
+    tbody.innerHTML = `<tr><td colspan="4">Пока никто не участвует</td></tr>`;
+    return;
+  }
+  const participants = participantsSnap.val();
+  const users = usersSnap.exists() ? usersSnap.val() : {};
+  tbody.innerHTML = Object.entries(participants).map(([uid, val], idx) => `
+    <tr>
+      <td>${idx + 1}</td>
+      <td>${users[uid]?.username || uid}</td>
+      <td>${users[uid]?.email || ""}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-danger" onclick="window.removeParticipant('${gameId}', '${uid}')">Удалить</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// --- ВЫЗЫВАЙТЕ loadParticipants(gameId) при открытии модалки игры ---
+// Например, после показа модалки nextGameInfoModal:
+document.getElementById('nextGameInfoModal').addEventListener('show.bs.modal', function (event) {
+  // Получите gameId для текущей игры (например, сохраните его в переменную при открытии)
+  loadParticipants(currentGameId);
+});
+    });
+    
+    window.showParticipantsModal = async (gameId) => {
+  // Получаем участников и пользователей
+  const participantsSnap = await get(ref(db, `apps/chgk/games/${gameId}/participants`));
+  const usersSnap = await get(ref(db, "users"));
+  const tbody = document.getElementById('participantsModalTable');
+  if (!tbody) return;
+  if (!participantsSnap.exists()) {
+    tbody.innerHTML = `<tr><td colspan="4">Пока никто не участвует</td></tr>`;
+  } else {
+    const participants = participantsSnap.val();
+    const users = usersSnap.exists() ? usersSnap.val() : {};
+    tbody.innerHTML = Object.entries(participants).map(([uid, val], idx) => `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>${users[uid]?.username || uid}</td>
+        <td>${users[uid]?.email || ""}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-danger" onclick="window.removeParticipant('${gameId}', '${uid}');window.showParticipantsModal('${gameId}')">Удалить</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+  new bootstrap.Modal(document.getElementById('participantsModal')).show();
+};
+    </script>
+</body>
+</html>

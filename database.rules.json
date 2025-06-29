@@ -1,0 +1,102 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "users": {
+      ".read": "root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      ".write": "root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true",
+        ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true"
+      }
+    },
+    "bank": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "accounts": {
+        "$uid": {
+          ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true",
+          ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true",
+          "accounts": {
+            "$accountId": {
+              ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true",
+              ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true"
+            }
+          }
+        },
+        "BANK_RESERVE": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      },
+      "accountRequests": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "$uid": {
+          ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true",
+          ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true"
+        }
+      },
+      "requests": {
+        "$uid": {
+          ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true",
+          ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() === true"
+        }
+      },
+      "currencies": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "feePercent": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "newAccountFee": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "payments": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "settings": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        },
+        "vipUsers": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          "$vipUid": {
+            ".read": "auth != null",
+            ".write": "auth != null"
+          }
+        },
+        "history": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          "$paymentId": {
+            ".read": "auth != null",
+            ".write": "auth != null"
+          }
+        }
+      }
+    },
+    "greetings": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "chgk": {
+      ".read": true,
+      ".write": "auth != null",
+      "games": {
+        "$gameId": {
+          ".read": true,
+          ".write": "auth != null"
+        }
+      },
+      "appeals": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    }
+  }
+} 

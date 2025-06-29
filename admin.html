@@ -1,0 +1,1598 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ARTEnet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+      .bd-mode-toggle .dropdown-menu .active .bi {
+        display: block !important;
+      }
+
+
+      html, body {
+        height: 100%;
+        background: transparent !important;
+      }
+
+      .modal-backdrop.show {
+        backdrop-filter: blur(80px) brightness(0.2) !important;
+        -webkit-backdrop-filter: blur(80px) brightness(0.2) !important;
+        background-color: rgba(0,0,0,0.8) !important;
+      }
+
+      #blur-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1040;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        backdrop-filter: blur(40px) brightness(0.2);
+        -webkit-backdrop-filter: blur(40px) brightness(0.2);
+        background: rgba(0,0,0,0.7);
+      }
+      #blur-overlay.light-blur {
+        backdrop-filter: blur(20px) brightness(0.7);
+        -webkit-backdrop-filter: blur(20px) brightness(0.7);
+        background: rgba(60,60,80,0.18);
+      }
+
+      main, .container.my-4 {
+        padding-top: 60px !important; /* увеличьте если navbar выше */
+      } 
+
+      #liveAlertPlaceholder {
+        position: fixed;
+        top: 70px; /* чуть ниже navbar */
+        left: 0;
+        right: 0;
+        z-index: 2000;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #liveAlertPlaceholder .alert {
+        pointer-events: auto;
+        margin-bottom: 0.5rem;
+      }
+
+    </style>
+  </head>
+
+  <body class="p-3 m-0 border-0 bd-example m-0 border-0">
+      <div id="blur-overlay" style="position:fixed;inset:0;z-index:1040;pointer-events:none;opacity:1;transition:opacity 0.2s;backdrop-filter:blur(40px) brightness(0.2);-webkit-backdrop-filter:blur(40px) brightness(0.2);background:rgba(0,0,0,0.7);"></div>
+
+      <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="main.html">
+            <img src="photos/logo-color-2.png" alt="ARTEnet" height="30" class="d-inline-block align-text-top">
+          </a>
+
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="main.html">Главное</a>
+              </li><!--
+              <li class="nav-item">
+                <a class="nav-link" href="#">Добавить приложение</a>
+              </li>-->
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="account.html">Аккаунт</a>
+              </li>
+            </ul>
+            <small>
+              <em>
+                <span class="navbar-text m-2" id="user-id">
+                  Ваш UID: <span id="admin-uid" class="text-primary"></span>
+                </span>
+              </em>
+            </small>
+            <form class="d-flex" id="logout-form">
+              <button class="btn btn-outline-success" type="submit">Выйти из аккаунта</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Модалка проверки администратора -->
+      <div class="modal fade" id="adminCheckModal" tabindex="-1" aria-labelledby="adminCheckModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content text-center">
+            <div class="modal-header border-0">
+              <h5 class="modal-title w-100" id="adminCheckModalLabel">Проверка прав администратора</h5>
+            </div>
+            <div class="modal-body">
+              <div id="adminCheckSpinner">
+                <div class="spinner-border text-primary mb-3" role="status"></div>
+                <div>Проверяем доступ...</div>
+              </div>
+              <div id="adminCheckDenied" class="d-none">
+                <div class="text-danger mb-3"><i class="bi bi-x-circle" style="font-size:2rem;"></i></div>
+                <div>У вас нет прав администратора</div>
+              </div>
+            </div>
+            <div class="modal-footer border-0 flex-column">
+              <div class="progress w-100" style="height: 4px;">
+                <div id="adminCheckProgress" class="progress-bar bg-danger" role="progressbar" style="width: 0%; transition: width 3s linear;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Модалка изменения данных аккаунта -->
+      <div class="modal fade" id="accountActionModal" tabindex="-1" aria-labelledby="accountActionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="accountActionModalLabel"></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body" id="accountActionModalBody"></div>
+            <div class="modal-footer" id="accountActionModalFooter"></div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div id="liveAlertPlaceholder" role="alert"></div>
+
+      <div class="container my-4">
+        <div class="mb-4">
+          <h5>Администрирование</h5>
+        </div>
+        <!-- 1. Добавьте вкладку "Отзывы" рядом с реф-кодами и кодами -->
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="accounts-tab" data-bs-toggle="tab" data-bs-target="#accounts" type="button" role="tab" aria-controls="accounts" aria-selected="true">Аккаунты</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="apps-tab" data-bs-toggle="tab" data-bs-target="#apps" type="button" role="tab" aria-controls="apps" aria-selected="false">Приложения</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="refs-tab" data-bs-toggle="tab" data-bs-target="#refs" type="button" role="tab" aria-controls="refs" aria-selected="false">Реферальные ссылки</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="codes-tab" data-bs-toggle="tab" data-bs-target="#codes" type="button" role="tab" aria-controls="codes" aria-selected="false">Коды приложений</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="feedback-tab" data-bs-toggle="tab" data-bs-target="#feedback" type="button" role="tab" aria-controls="feedback" aria-selected="false">Отзывы</button>
+          </li>
+        </ul>
+        <div class="tab-content border border-top-0 p-3 bg-white" id="adminTabsContent" style="min-height:300px;">
+          <div class="tab-pane fade show active" id="accounts" role="tabpanel" aria-labelledby="accounts-tab">
+            <h6>Управление аккаунтами</h6>
+            
+            <div class="input-group mb-3" id="accounts-search-group">
+              <input type="text" class="form-control" id="accounts-search" placeholder="Поиск по UID, имени или почте">
+              <button class="btn btn-outline-secondary" type="button" id="accounts-search-clear">Очистить</button>
+            </div>
+
+            <div id="accounts-section">Загрузка...</div>
+          </div>
+          <div class="tab-pane fade" id="apps" role="tabpanel" aria-labelledby="apps-tab">
+            <h6>Управление приложениями</h6>
+
+            <div class="input-group mb-3" id="apps-search-group">
+              <input type="text" class="form-control" id="apps-search" placeholder="Поиск по id или названию">
+              <button class="btn btn-outline-secondary" type="button" id="apps-search-clear">Очистить</button>
+            </div>
+            <div id="apps-section">Загрузка...</div>
+          </div>
+          <div class="tab-pane fade" id="refs" role="tabpanel" aria-labelledby="refs-tab">
+            <h6>Реферальные ссылки</h6>
+
+            <div class="input-group mb-3" id="refs-search-group">
+              <input type="text" class="form-control" id="refs-search" placeholder="Поиск по коду или приложению">
+              <button class="btn btn-outline-secondary" type="button" id="refs-search-clear">Очистить</button>
+            </div>
+            <div id="refs-section">Загрузка...</div>
+          </div>
+          <div class="tab-pane fade" id="codes" role="tabpanel" aria-labelledby="codes-tab">
+            <h6>Коды добавления приложений</h6>
+
+            <div class="input-group mb-3" id="codes-search-group">
+              <input type="text" class="form-control" id="codes-search" placeholder="Поиск по коду или приложению">
+              <button class="btn btn-outline-secondary" type="button" id="codes-search-clear">Очистить</button>
+            </div>
+            <div id="codes-section">Загрузка...</div>
+          </div>
+          <div class="tab-pane fade" id="feedback" role="tabpanel" aria-labelledby="feedback-tab">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+  <h6 class="mb-0">Отзывы пользователей</h6>
+  <button class="btn btn-sm btn-outline-primary" id="editFeedbackQuestionsBtn">Редактировать вопросы</button>
+</div>
+<div id="feedback-analytics" class="mb-3"></div>
+<div id="feedback-section">Загрузка...</div>
+          </div>
+        </div>
+      </div>
+    
+      <footer class="bg-body-tertiary text-center text-lg-start mt-4 border-top">
+        <div class="container p-3">
+          <div class="row align-items-center">
+            <div class="col-lg-6 text-lg-start text-center mb-2 mb-lg-0">
+              <span class="fw-bold">ARTEnet &copy; 2025</span>
+            </div>
+            <div class="col-lg-6 text-lg-end text-center">
+              <a href="mailto:ltartenet@gmail.com" class="text-decoration-none text-secondary me-3">Поддержка</a>
+              <a href="#" class="text-decoration-none text-secondary disabled">Политика конфиденциальности</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+    <!--    FIREBASE    -->
+        
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+      import { getAuth, reload, signOut, onAuthStateChanged, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+      import { getDatabase, ref, get, set, remove, onValue, update } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+      
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+        authDomain: "artenetshop-7b884.firebaseapp.com",
+        projectId: "artenetshop-7b884",
+        storageBucket: "artenetshop-7b884.appspot.com",
+        messagingSenderId: "542098227452",
+        appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+        measurementId: "G-8PDLBR77YN",
+        databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const analytics = getAnalytics(app);
+      const user = sessionStorage.getItem('isLoggedIn');
+      const db = getDatabase(app);
+      const codesRef = ref(db, "app-codes"); // <-- добавьте эту строку
+
+      const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+
+      let adminCheckTimeout = setTimeout(() => {
+        document.getElementById('adminCheckSpinner').classList.add('d-none');
+        document.getElementById('adminCheckDenied').classList.remove('d-none');
+        document.getElementById('adminCheckDenied').innerHTML += '<div class="mt-2"><button class="btn btn-primary" onclick="location.reload()">Повторить</button></div>';
+      }, 10000);
+
+      const appendAlert = (message, type) => {
+        // Удалим лишние алерты, если их больше двух
+        while (alertPlaceholder.children.length >= 2) {
+          alertPlaceholder.removeChild(alertPlaceholder.firstChild);
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = `alert alert-${type} alert-dismissible fade show`;
+        wrapper.role = 'alert';
+        wrapper.innerHTML = `
+          <div>${message}</div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        alertPlaceholder.append(wrapper);
+
+        // Удаление алерта через 10 секунд
+        setTimeout(() => {
+          wrapper.classList.remove("show"); // плавное исчезновение
+          setTimeout(() => wrapper.remove(), 150); // удаление из DOM
+        }, 10000);
+      };
+
+
+      // Показывать размытие при открытии модалки
+      const blurOverlay = document.getElementById('blur-overlay');
+      const adminCheckModalEl = document.getElementById('adminCheckModal');
+      const adminCheckModal = new bootstrap.Modal(adminCheckModalEl, { backdrop: 'static', keyboard: false });
+      const accountActionModalEl = document.getElementById('accountActionModal');
+      let blurActive = false;
+
+      // Для модалки загрузки — тёмный фон
+      adminCheckModalEl.addEventListener('show.bs.modal', () => {
+        blurOverlay.classList.remove('light-blur');
+        if (!blurActive) {
+          blurOverlay.style.opacity = '1';
+          blurActive = true;
+        }
+      });
+      adminCheckModalEl.addEventListener('hidden.bs.modal', () => {
+        blurOverlay.style.opacity = '0';
+        blurActive = false;
+      });
+
+      // Для всех остальных модалок — светлый фон
+      accountActionModalEl.addEventListener('show.bs.modal', () => {
+        blurOverlay.classList.add('light-blur');
+        if (!blurActive) {
+          blurOverlay.style.opacity = '1';
+          blurActive = true;
+        }
+      });
+      accountActionModalEl.addEventListener('hidden.bs.modal', () => {
+        blurOverlay.style.opacity = '0';
+        blurActive = false;
+      });
+
+      // Показываем модалку загрузки сразу
+      adminCheckModal.show();
+
+      onAuthStateChanged(auth, async (user) => {
+        if (!user || !user.emailVerified) {
+          // Скрываем спиннер, показываем отказ, запускаем прогресс-бар
+          document.getElementById('adminCheckSpinner').classList.add('d-none');
+          document.getElementById('adminCheckDenied').classList.remove('d-none');
+          const progress = document.getElementById('adminCheckProgress');
+          progress.style.width = '100%';
+          setTimeout(() => {
+            adminCheckModal.hide();
+            window.location.href = "index.html";
+          }, 3000);
+          return;
+        }
+
+        // Проверка блокировки пользователя
+
+        const userDbRef = ref(db, `users/${user.uid}`);
+        const userDbSnap = await get(userDbRef);
+        if (userDbSnap.exists() && userDbSnap.val().blocked) {
+          const blockedModalEl = document.getElementById('blockedModal');
+          const blockedModal = new bootstrap.Modal(blockedModalEl, { backdrop: 'static', keyboard: false });
+          const progressBar = document.getElementById('blockedProgress');
+          let timer;
+
+          // Убедитесь, что цвет всегда danger
+          progressBar.classList.remove("bg-secondary", "bg-success", "bg-warning");
+          progressBar.classList.add("bg-danger");
+
+          // Сброс transition и ширины
+          progressBar.style.transition = "none";
+          progressBar.style.width = "100%";
+          setTimeout(() => {
+            progressBar.style.transition = "width 10s linear";
+            progressBar.style.width = "0%";
+          }, 50);
+
+          // Кнопка возврата
+          document.getElementById("blockedBackBtn").onclick = async () => {
+            clearTimeout(timer);
+            blockedModal.hide();
+            await signOut(auth);
+            window.location.href = "index.html";
+          };
+
+          // Автоматический возврат через 10 секунд
+          timer = setTimeout(async () => {
+            blockedModal.hide();
+            await signOut(auth);
+            window.location.href = "index.html";
+          }, 10000);
+
+          blockedModal.show();
+          return;
+        }
+
+        // Проверяем isAdmin в базе
+        try {
+          const userInfoRef = ref(db, `users/${user.uid}/isAdmin`);
+          const userInfoSnap = await get(userInfoRef);
+          if (!userInfoSnap.exists() || userInfoSnap.val() !== true) {
+            document.getElementById('adminCheckSpinner').classList.add('d-none');
+            document.getElementById('adminCheckDenied').classList.remove('d-none');
+            const progress = document.getElementById('adminCheckProgress');
+            progress.style.width = '100%';
+            setTimeout(() => {
+              adminCheckModal.hide();
+              window.location.href = "index.html";
+            }, 3000);
+            return;
+          }
+        } catch (e) {
+          document.getElementById('adminCheckSpinner').classList.add('d-none');
+          document.getElementById('adminCheckDenied').classList.remove('d-none');
+          document.getElementById('adminCheckDenied').innerHTML += '<div class="mt-2 text-danger">Ошибка соединения с сервером</div>';
+        }
+
+        // Если админ — скрываем модалку
+        clearTimeout(adminCheckTimeout);
+        adminCheckModal.hide();
+        document.getElementById("admin-uid").textContent = user.uid;
+
+        // --- Управление аккаунтами ---
+        const accountsSection = document.getElementById("accounts-section");
+        const accountsSearchInput = document.getElementById("accounts-search");
+        const accountsSearchClear = document.getElementById("accounts-search-clear");
+
+        let allAccounts = []; // Для хранения всех пользователей
+
+        const accountsRef = ref(db, "users");
+        onValue(accountsRef, (snapshot) => {
+          allAccounts = [];
+          snapshot.forEach((childSnapshot) => {
+            const account = childSnapshot.val();
+            const uid = childSnapshot.key;
+            if (!account.username) return;
+            allAccounts.push({ ...account, uid });
+          });
+          renderAccountsList();
+        });
+
+        function renderAccountsList() {
+          const search = (accountsSearchInput?.value || "").trim().toLowerCase();
+          accountsSection.innerHTML = "";
+          const ul = document.createElement("ul");
+          ul.className = "list-group";
+          let found = false;
+          allAccounts.forEach(account => {
+            if (
+              !search ||
+              account.uid.toLowerCase().includes(search) ||
+              (account.username && account.username.toLowerCase().includes(search)) ||
+              (account.email && account.email.toLowerCase().includes(search))
+            ) {
+              found = true;
+              const li = document.createElement("li");
+              li.className = "list-group-item mb-2";
+              li.innerHTML = `
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+                  <div>
+                    <b>${account.username}</b>
+                    <span class="text-secondary ms-2">${account.email || "—"}</span>
+                    <span class="badge bg-light text-dark ms-2">${account.uid}</span>
+                    ${account.isAdmin ? '<span class="badge bg-primary ms-2">Admin</span>' : ""}
+                    <span class="badge ${account.blocked ? 'bg-danger' : 'bg-success'} ms-2">${account.blocked ? 'Заблокирован' : 'Активен'}</span>
+                  </div>
+                  <div class="mt-2 mt-md-0">
+                    <button class="btn btn-sm btn-outline-primary" data-action="account-actions" data-uid="${account.uid}">Действия</button>
+                  </div>
+                </div>
+              `;
+              ul.appendChild(li);
+            }
+          });
+          if (found) {
+            accountsSection.appendChild(ul);
+          } else {
+            accountsSection.textContent = "Нет аккаунтов";
+          }
+        }
+
+        // Обработчики поиска
+        accountsSearchInput?.addEventListener("input", renderAccountsList);
+        accountsSearchClear?.addEventListener("click", () => {
+          accountsSearchInput.value = "";
+          renderAccountsList();
+        });
+
+        // Обработчик кнопок управления аккаунтами ---
+        accountsSection.addEventListener("click", async (e) => {
+          const btn = e.target.closest("button[data-action]");
+          if (!btn) return;
+          const uid = btn.dataset.uid;
+          const action = btn.dataset.action;
+
+          // Только для кнопки "Действия"
+          if (action === "account-actions") {
+            // Получаем данные пользователя из Realtime Database
+            const userSnap = await get(ref(db, `users/${uid}`));
+            const userData = userSnap.exists() ? userSnap.val() : {};
+
+            // Функция для обновления содержимого модалки действий
+            async function renderActionsModal() {
+              // Получаем актуальные данные пользователя
+              const freshSnap = await get(ref(db, `users/${uid}`));
+              const freshData = freshSnap.exists() ? freshSnap.val() : {};
+              const appsSnap = await get(ref(db, `users/${uid}/apps`));
+              const apps = appsSnap.exists() ? Object.keys(appsSnap.val()) : [];
+
+              showAccountModal({
+                title: `Действия с аккаунтом: ${freshData.username || uid}`,
+                body: `
+                  <div class="mb-2"><b>Имя:</b> ${freshData.username}</div>
+                  <div class="mb-2"><b>Email:</b> ${freshData.email || "—"}</div>
+                  <div class="mb-2"><b>UID:</b> ${uid}</div>
+                  <div class="mb-2"><b>Статус:</b> ${freshData.blocked ? '<span class="text-danger">Заблокирован</span>' : '<span class="text-success">Активен</span>'}</div>
+                  <div class="mb-4"><b>Дата регистрации:</b> ${freshData.createdAt ? new Date(freshData.createdAt).toLocaleDateString() : "—"}</div>
+                  
+                  <h5>Приложения пользователя</h5>
+                  <div class="input-group mb-3">
+                    <input type="text" id="appsInput" class="form-control" placeholder="Приложения через запятую" value="${apps.join(", ")}">
+                    <button class="btn btn-outline-info" id="saveAppsBtn">Сохранить приложения</button>
+                  </div>
+
+                  <h5>Имя</h5>
+                  <div class="input-group mb-3">
+                    <input type="text" id="editNameInput" class="form-control" placeholder="Новое имя" value="${freshData.username || ""}">
+                    <button class="btn btn-outline-primary" id="saveNameBtn">Сохранить имя</button>
+                  </div>
+                    
+                  <div class="d-grid gap-3">
+                    <button class="btn btn-outline-warning" id="toggleBlockBtn">${freshData.blocked ? 'Разблокировать' : 'Заблокировать'}</button>
+                    <button class="btn btn-outline-secondary" id="resetPassBtn" ${freshData.email ? "" : "disabled"}>Сброс пароля</button>
+                    <button class="btn btn-outline-danger" id="deleteBtn">Удалить</button>
+                  </div>
+                `,
+                actions: [
+                  { text: "Закрыть", className: "btn btn-secondary", dismiss: true }
+                ]
+              });
+
+              // Сохранить имя
+              document.getElementById("saveNameBtn")?.addEventListener("click", async () => {
+                const newName = document.getElementById("editNameInput").value.trim();
+                if (newName) {
+                  await update(ref(db, `users/${uid}`), { username: newName });
+                  //appendAlert("Имя изменено", "success");
+                  renderActionsModal();
+                }
+              });
+
+              // Заблокировать/разблокировать
+              document.getElementById("toggleBlockBtn")?.addEventListener("click", async () => {
+                await update(ref(db, `users/${uid}`), { blocked: !freshData.blocked });
+                appendAlert(freshData.blocked ? "Аккаунт разблокирован" : "Аккаунт заблокирован", "info");
+                const modalEl = document.getElementById('accountActionModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+                setTimeout(() => renderActionsModal(), 350);
+              });
+
+              // Сохранить приложения
+              document.getElementById("saveAppsBtn")?.addEventListener("click", async () => {
+                const newApps = document.getElementById("appsInput").value;
+                const appsArr = newApps.split(",").map(a => a.trim()).filter(Boolean);
+
+                // Получаем текущий список приложений пользователя
+                const userAppsSnap = await get(ref(db, `users/${uid}/apps`));
+                const oldAppsObj = userAppsSnap.exists() ? userAppsSnap.val() : {};
+                const oldAppsArr = Object.keys(oldAppsObj);
+
+                // Определяем новые и удалённые приложения
+                const addedApps = appsArr.filter(a => !oldAppsArr.includes(a));
+                const removedApps = oldAppsArr.filter(a => !appsArr.includes(a));
+
+                // Обновляем список приложений пользователя
+                const appsObj = {};
+                appsArr.forEach(a => appsObj[a] = true);
+                await set(ref(db, `users/${uid}/apps`), appsObj);
+
+                // Для новых приложений — создаём аккаунт в apps/{appID}/userData/{UID}
+                const now = new Date().toISOString();
+                for (const appID of addedApps) {
+                  await set(ref(db, `apps/${appID}/userData/${uid}`), { receivedAt: now });
+                }
+
+                // Для удалённых — удаляем аккаунт из apps/{appID}/userData/{UID}
+                for (const appID of removedApps) {
+                  await remove(ref(db, `apps/${appID}/userData/${uid}`));
+                }
+
+                appendAlert("Список приложений обновлён", "success");
+                const modalEl = document.getElementById('accountActionModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+                setTimeout(() => renderActionsModal(), 350);
+              });
+
+              // Сброс пароля
+              document.getElementById("resetPassBtn")?.addEventListener("click", async () => {
+                await sendPasswordResetEmail(auth, freshData.email);
+                appendAlert("Ссылка на сброс пароля отправлена", "info");
+              });
+
+              // Удалить
+              document.getElementById("deleteBtn")?.addEventListener("click", async () => {
+                await remove(ref(db, `users/${uid}`));
+                bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                appendAlert("Аккаунт удалён", "danger");
+              });
+            }
+
+            // Показываем модалку действий
+            renderActionsModal();
+          }
+        });
+
+        // Загрузка приложений
+        const appsSection = document.getElementById("apps-section");
+        const appsRef = ref(db, "apps");
+        onValue(appsRef, (snapshot) => {
+          appsSection.innerHTML = ""; // Очистка секции
+          const ul = document.createElement("ul");
+          ul.className = "list-group";
+          snapshot.forEach((childSnapshot) => {
+            const app = childSnapshot.val();
+            const appKey = childSnapshot.key;
+            const li = document.createElement("li");
+            li.className = "list-group-item d-flex justify-content-between align-items-center";
+            li.innerHTML = `
+              <div>
+                <b>${appKey}</b>
+                <span class="ms-2 text-secondary">${app.url || "нет url"}</span>
+                ${app.title ? `<span class="ms-2">${app.title}</span>` : ""}
+              </div>
+              <div>
+                <button class="btn btn-sm btn-outline-primary me-1" data-action="edit-app" data-app="${appKey}">Редактировать</button>
+                <button class="btn btn-sm btn-outline-danger" data-action="delete-app" data-app="${appKey}">Удалить</button>
+              </div>
+            `;
+            ul.appendChild(li);
+          });
+
+          // Кнопка добавить приложение
+          const addLi = document.createElement("li");
+          addLi.className = "list-group-item text-center";
+          addLi.innerHTML = `<button class="btn btn-success" id="add-app-btn">Добавить приложение</button>`;
+          ul.appendChild(addLi);
+
+          appsSection.appendChild(ul);
+        });
+
+        appsSection.addEventListener("click", async (e) => {
+          const btn = e.target.closest("button[data-action],#add-app-btn");
+          if (!btn) return;
+
+          // --- Добавить приложение ---
+          if (btn.id === "add-app-btn") {
+            showAccountModal({
+              title: "Добавить приложение",
+              body: `
+                <input type="text" id="modalAppKey" class="form-control mb-2" placeholder="Ключ приложения (например, chgk)">
+                <input type="text" id="modalAppUrl" class="form-control mb-2" placeholder="URL (например, apps/chgk.html)">
+                <input type="text" id="modalAppTitle" class="form-control mb-2" placeholder="Название (необязательно)">
+                <input type="text" id="modalAppImage" class="form-control mb-2" placeholder="URL картинки (необязательно)">
+                <textarea id="modalAppDesc" class="form-control mb-2" placeholder="Описание (необязательно)"></textarea>
+              `,
+              actions: [
+                {
+                  text: "Добавить",
+                  className: "btn btn-success",
+                  onClick: async () => {
+                    const key = document.getElementById("modalAppKey").value.trim();
+                    const url = document.getElementById("modalAppUrl").value.trim();
+                    const title = document.getElementById("modalAppTitle").value.trim();
+                    const image = document.getElementById("modalAppImage").value.trim();
+                    const description = document.getElementById("modalAppDesc").value.trim();
+                    if (!key || !url) {
+                      appendAlert("Ключ и URL обязательны!", "warning");
+                      return;
+                    }
+                    await set(ref(db, `apps/${key}`), { url, title, image, description });
+                    bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                    appendAlert("Приложение добавлено", "success");
+                  }
+                },
+                {
+                  text: "Отмена",
+                  className: "btn btn-secondary",
+                  dismiss: true
+                }
+              ]
+            });
+            return;
+          }
+
+          const appKey = btn.dataset.app;
+          if (!appKey) return;
+
+          // --- Редактировать приложение ---
+          if (btn.dataset.action === "edit-app") {
+            const appSnap = await get(ref(db, `apps/${appKey}`));
+            const app = appSnap.exists() ? appSnap.val() : {};
+            showAccountModal({
+              title: `Редактировать приложение: ${appKey}`,
+              body: `
+                <input type="text" id="modalAppUrl" class="form-control mb-2" placeholder="URL" value="${app.url || ""}">
+                <input type="text" id="modalAppTitle" class="form-control mb-2" placeholder="Название" value="${app.title || ""}">
+                <input type="text" id="modalAppImage" class="form-control mb-2" placeholder="URL картинки" value="${app.image || ""}">
+                <textarea id="modalAppDesc" class="form-control mb-2" placeholder="Описание">${app.description || ""}</textarea>
+              `,
+              actions: [
+                {
+                  text: "Сохранить",
+                  className: "btn btn-primary",
+                  onClick: async () => {
+                    const url = document.getElementById("modalAppUrl").value.trim();
+                    const title = document.getElementById("modalAppTitle").value.trim();
+                    const image = document.getElementById("modalAppImage").value.trim();
+                    const description = document.getElementById("modalAppDesc").value.trim();
+                    if (!url) {
+                      appendAlert("URL обязателен!", "warning");
+                      return;
+                    }
+                    await update(ref(db, `apps/${appKey}`), { url, title, image, description });
+                    bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                    appendAlert("Приложение обновлено", "success");
+                  }
+                },
+                {
+                  text: "Отмена",
+                  className: "btn btn-secondary",
+                  dismiss: true
+                }
+              ]
+            });
+            return;
+          }
+
+          // --- Удалить приложение ---
+          if (btn.dataset.action === "delete-app") {
+            showAccountModal({
+              title: `Удалить приложение: ${appKey}?`,
+              body: "Вы уверены, что хотите удалить это приложение?",
+              actions: [
+                {
+                  text: "Удалить",
+                  className: "btn btn-danger",
+                  onClick: async () => {
+                    await remove(ref(db, `apps/${appKey}`));
+                    bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                    appendAlert("Приложение удалено", "danger");
+                  }
+                },
+                {
+                  text: "Отмена",
+                  className: "btn btn-secondary",
+                  dismiss: true
+                }
+              ]
+            });
+            return;
+          }
+        });
+
+        // Загрузка реферальных ссылок
+        const refsSection = document.getElementById("refs-section");
+        const refsRef = ref(db, "ref-codes");
+        onValue(refsRef, (snapshot) => {
+          refsSection.innerHTML = "";
+          const ul = document.createElement("ul");
+          ul.className = "list-group";
+          let found = false;
+          snapshot.forEach((childSnapshot) => {
+            const refData = childSnapshot.val();
+            const refKey = childSnapshot.key;
+            found = true;
+            const li = document.createElement("li");
+            li.className = "list-group-item d-flex justify-content-between align-items-center";
+            li.innerHTML = `
+              <div>
+                <b>${refKey}</b>
+                <span class="ms-2">приложение: <b>${refData.app || "—"}</b></span>
+                <span class="ms-2">макс: ${refData.maxUses || "∞"}</span>
+                <span class="ms-2">использовано: ${refData.used ? Object.keys(refData.used).length : 0}</span>
+                <span class="ms-2 text-secondary">создал: ${refData.createdByName || refData.createdBy || "—"}</span>
+              </div>
+              <div>
+                <button class="btn btn-sm btn-outline-primary" data-action="ref-actions" data-ref="${refKey}">Действия</button>
+              </div>
+            `;
+            ul.appendChild(li);
+          });
+          // Кнопка добавить ссылку
+          const addLi = document.createElement("li");
+          addLi.className = "list-group-item text-center";
+          addLi.innerHTML = `<button class="btn btn-success" id="add-ref-btn">Создать реферальную ссылку</button>`;
+          ul.appendChild(addLi);
+          refsSection.appendChild(ul);
+        });
+
+        refsSection.addEventListener("click", async (e) => {
+          const btn = e.target.closest("button[data-action],#add-ref-btn");
+          if (!btn) return;
+
+          // --- Создать реферальную ссылку ---
+          if (btn.id === "add-ref-btn") {
+            // Получаем список приложений для выбора
+            let appsList = [];
+            const appsSnap = await get(ref(db, "apps"));
+            appsSnap.forEach(child => {
+              const key = child.key;
+              const title = child.val().title || key;
+              appsList.push({ key, title });
+            });
+
+            showAccountModal({
+              title: "Создать реферальную ссылку",
+              body: `
+                <select id="modalRefApp" class="form-select mb-2">
+                  <option value="">Выберите приложение</option>
+                  ${appsList.map(app => `<option value="${app.key}">${app.title} (${app.key})</option>`).join("")}
+                </select>
+                <input type="number" id="modalRefMax" class="form-control mb-2" placeholder="Максимум использований (0 = бесконечно)">
+              `,
+              actions: [
+                {
+                  text: "Создать",
+                  className: "btn btn-success",
+                  onClick: async () => {
+                    const app = document.getElementById("modalRefApp").value.trim();
+                    let maxUses = parseInt(document.getElementById("modalRefMax").value, 10);
+                    if (!app) {
+                      appendAlert("Приложение обязательно!", "warning");
+                      return;
+                    }
+                    if (isNaN(maxUses) || maxUses < 0) maxUses = 0;
+                    // Генерируем уникальный код
+                    const code = Math.random().toString(36).slice(2, 10).toUpperCase();
+                    await set(ref(db, `ref-codes/${code}`), {
+                      app,
+                      maxUses: maxUses === 0 ? null : maxUses,
+                      createdBy: user ? user.uid : "admin",
+                      createdByName: user ? (user.displayName || user.email || user.uid) : "admin"
+                    });
+                    bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                    appendAlert("Ссылка создана", "success");
+                  }
+                },
+                {
+                  text: "Отмена",
+                  className: "btn btn-secondary",
+                  dismiss: true
+                }
+              ]
+            });
+            return;
+          }
+
+          // --- Одна кнопка "Действия" для каждой ссылки ---
+          if (btn.dataset.action === "ref-actions" && btn.dataset.ref) {
+            const refKey = btn.dataset.ref;
+            async function renderRefActionsModal() {
+              // Получаем актуальные данные ссылки
+              const refSnap = await get(ref(db, `ref-codes/${refKey}`));
+              const refData = refSnap.exists() ? refSnap.val() : {};
+              // Получаем список приложений для выбора
+              let appsList = [];
+              const appsSnap = await get(ref(db, "apps"));
+              appsSnap.forEach(child => {
+                const key = child.key;
+                const title = child.val().title || key;
+                appsList.push({ key, title });
+              });
+
+              // Формируем ссылку
+              const inviteUrl = `${window.location.origin}/main.html?ref=${encodeURIComponent(refKey)}`;
+
+              // Формируем таблицу использований
+              let usedHtml = "";
+              const usedSnap = await get(ref(db, `ref-codes/${refKey}/used`));
+              if (usedSnap.exists()) {
+                const used = usedSnap.val();
+                const usedArr = Object.entries(used)
+                  .map(([uid, dateStr]) => ({
+                    uid,
+                    date: dateStr || null
+                  }))
+                  .sort((a, b) => (a.date || 0) - (b.date || 0));
+                usedHtml = `<div class="table-responsive"><table class="table table-striped table-sm align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Имя</th>
+                      <th>UID</th>
+                      <th>Дата</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
+                for (let i = 0; i < usedArr.length; i++) {
+                  const { uid, date } = usedArr[i];
+                  let username = "—";
+                  try {
+                    const userSnap = await get(ref(db, `users/${uid}`));
+                    if (userSnap.exists()) {
+                      username = userSnap.val().username || "—";
+                    }
+                  } catch {}
+                  const dateStr = date ? new Date(date).toLocaleString() : "—";
+                  usedHtml += `<tr>
+                    <td>${i + 1}</td>
+                    <td>${username}</td>
+                    <td>${uid}</td>
+                    <td>${dateStr}</td>
+                  </tr>`;
+                }
+                usedHtml += `</tbody></table></div>`;
+              } else {
+                usedHtml = `<div class="text-muted">Эту ссылку еще никто не использовал.</div>`;
+              }
+
+              showAccountModal({
+                title: `Действия с реф. ссылкой: ${refKey}`,
+                body: `
+                  <div class="mb-2"><b>Код:</b> ${refKey}</div>
+                  <div class="mb-2"><b>Приложение:</b> ${refData.app || "—"}</div>
+                  <div class="mb-2"><b>Максимум использований:</b> ${refData.maxUses || "∞"}</div>
+                  <div class="mb-2"><b>Использовано:</b> ${refData.used ? Object.keys(refData.used).length : 0}</div>
+                  <div class="mb-2"><b>Создал:</b> ${refData.createdByName || refData.createdBy || "—"}</div>
+                  <hr>
+                  <h6>Редактировать</h6>
+                  <select id="modalRefApp" class="form-select mb-2">
+                    <option value="">Выберите приложение</option>
+                    ${appsList.map(app => `<option value="${app.key}" ${refData.app === app.key ? "selected" : ""}>${app.title} (${app.key})</option>`).join("")}
+                  </select>
+                  <input type="number" id="modalRefMax" class="form-control mb-2" placeholder="Максимум использований (0 = бесконечно)" value="${refData.maxUses || ""}">
+                  <div class="mb-3">
+                    <label class="form-label mb-1"><b>Ссылка для приглашения:</b></label>
+                    <div class="input-group">
+                      <input type="text" id="copyRefInput" class="form-control" value="${inviteUrl}" readonly>
+                      <button class="btn btn-outline-secondary" id="copyRefBtn" type="button">Копировать</button>
+                    </div>
+                  </div>
+                  <div class="mb-2"><b>Использования:</b></div>
+                  ${usedHtml}
+                  <div id="refExtra"></div>
+                `,
+                actions: [
+                  { text: "Сохранить", className: "btn btn-primary", onClick: async () => {
+                    const app = document.getElementById("modalRefApp").value.trim();
+                    let maxUses = parseInt(document.getElementById("modalRefMax").value, 10);
+                    if (!app) {
+                      appendAlert("Приложение обязательно!", "warning");
+                      return;
+                    }
+                    if (isNaN(maxUses) || maxUses < 0) maxUses = 0;
+                    await update(ref(db, `ref-codes/${refKey}`), { app, maxUses: maxUses === 0 ? null : maxUses });
+                    const modalEl = document.getElementById('accountActionModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+                    setTimeout(() => renderRefActionsModal(), 350);
+                  }},
+                  { text: "Удалить", className: "btn btn-danger", onClick: async () => {
+                    await remove(ref(db, `ref-codes/${refKey}`));
+                    bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                    appendAlert("Ссылка удалена", "danger");
+                  }},
+                  { text: "Закрыть", className: "btn btn-secondary", dismiss: true }
+                ]
+              });
+
+              // Копировать ссылку
+              setTimeout(() => {
+                const copyBtn = document.getElementById("copyRefBtn");
+                const copyInput = document.getElementById("copyRefInput");
+                if (copyBtn && copyInput) {
+                  copyBtn.onclick = async () => {
+                    await navigator.clipboard.writeText(copyInput.value);
+                    copyBtn.textContent = "Скопировано!";
+                    setTimeout(() => (copyBtn.textContent = "Копировать"), 1500);
+                  };
+                  copyInput.onclick = () => copyInput.select();
+                }
+              }, 200);
+            }
+            renderRefActionsModal();
+            return;
+          }
+        });
+
+        // Коды приложений
+        const codesSection = document.getElementById("codes-section");
+        const codesSearchInput = document.getElementById("codes-search");
+        const codesSearchClear = document.getElementById("codes-search-clear");
+        let allCodes = [];
+
+        onValue(codesRef, (snapshot) => {
+          allCodes = [];
+          snapshot.forEach((childSnapshot) => {
+            const codeKey = childSnapshot.key;
+            const appName = childSnapshot.val();
+            allCodes.push({ codeKey, appName });
+          });
+          renderCodesList();
+        });
+
+        function renderCodesList() {
+          const search = (codesSearchInput?.value || "").trim().toLowerCase();
+          codesSection.innerHTML = "";
+          const ul = document.createElement("ul");
+          ul.className = "list-group";
+          allCodes.forEach(code => {
+            if (
+              !search ||
+              code.codeKey.toLowerCase().includes(search) ||
+              (code.appName && code.appName.toLowerCase().includes(search))
+            ) {
+              ul.innerHTML += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <b>${code.codeKey}</b>
+                    <span class="ms-2">приложение: <b>${code.appName}</b></span>
+                  </div>
+                  <div>
+                    <button class="btn btn-sm btn-outline-primary me-1" data-action="edit-code" data-code="${code.codeKey}">Изменить</button>
+                    <button class="btn btn-sm btn-outline-danger" data-action="delete-code" data-code="${code.codeKey}">Удалить</button>
+                  </div>
+                </li>
+              `;
+            }
+          });
+          ul.innerHTML += `<li class="list-group-item text-center"><button class="btn btn-success" id="add-code-btn">Добавить код</button></li>`;
+          codesSection.appendChild(ul);
+        }
+        codesSearchInput?.addEventListener("input", renderCodesList);
+        codesSearchClear?.addEventListener("click", () => {
+          codesSearchInput.value = "";
+          renderCodesList();
+        });
+
+        // CRUD обработчик
+        codesSection.addEventListener("click", async (e) => {
+          const btn = e.target.closest("button[data-action],#add-code-btn");
+          if (!btn) return;
+
+          // Получить список приложений для выбора
+          let appsList = [];
+          const appsSnap = await get(ref(db, "apps"));
+          appsSnap.forEach(child => {
+            const key = child.key;
+            const title = child.val().title || key;
+            appsList.push({ key, title });
+          });
+
+          // Добавить код
+          if (btn.id === "add-code-btn") {
+            showAccountModal({
+              title: "Добавить код приложения",
+              body: `
+                <input type="text" id="modalCodeKey" class="form-control mb-2" placeholder="Код">
+                <select id="modalCodeApp" class="form-select mb-2">
+                  <option value="">Выберите приложение</option>
+                  ${appsList.map(app => `<option value="${app.key}">${app.title} (${app.key})</option>`).join("")}
+                </select>
+              `,
+              actions: [
+                {
+                  text: "Добавить",
+                  className: "btn btn-success",
+                  onClick: async () => {
+                    const codeKey = document.getElementById("modalCodeKey").value.trim();
+                    const appName = document.getElementById("modalCodeApp").value.trim();
+                    if (!codeKey || !appName) {
+                      appendAlert("Код и приложение обязательны!", "warning");
+                      return;
+                    }
+                    await set(ref(db, `app-codes/${codeKey}`), appName);
+                    bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                    appendAlert("Код добавлен", "success");
+                  }
+                },
+                {
+                  text: "Отмена",
+                  className: "btn btn-secondary",
+                  dismiss: true
+                }
+              ]
+            });
+            return;
+          }
+
+          const codeKey = btn.dataset.code;
+          if (!codeKey) return;
+
+          // Изменить код
+          if (btn.dataset.action === "edit-code") {
+            const codeSnap = await get(ref(db, `app-codes/${codeKey}`));
+            const appName = codeSnap.exists() ? codeSnap.val() : "";
+            showAccountModal({
+              title: `Изменить код: ${codeKey}`,
+              body: `
+                <select id="modalCodeApp" class="form-select mb-2">
+                  <option value="">Выберите приложение</option>
+                  ${appsList.map(app => `<option value="${app.key}" ${appName === app.key ? "selected" : ""}>${app.title} (${app.key})</option>`).join("")}
+                </select>
+              `,
+              actions: [
+                {
+                  text: "Сохранить",
+                  className: "btn btn-primary",
+                  onClick: async () => {
+                    const newApp = document.getElementById("modalCodeApp").value.trim();
+                    if (!newApp) {
+                      appendAlert("Выберите приложение!", "warning");
+                      return;
+                    }
+                    await set(ref(db, `app-codes/${codeKey}`), newApp);
+                    bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                    appendAlert("Код обновлён", "success");
+                  }
+                },
+                {
+                  text: "Отмена",
+                  className: "btn btn-secondary",
+                  dismiss: true
+                }
+              ]
+            });
+            return;
+          }
+
+          // Удалить код
+          if (btn.dataset.action === "delete-code") {
+            showAccountModal({
+              title: `Удалить код: ${codeKey}?`,
+              body: "Вы уверены, что хотите удалить этот код?",
+              actions: [
+                {
+                  text: "Удалить",
+                  className: "btn btn-danger",
+                  onClick: async () => {
+                    await remove(ref(db, `app-codes/${codeKey}`));
+                    bootstrap.Modal.getInstance(document.getElementById('accountActionModal')).hide();
+                    appendAlert("Код удалён", "danger");
+                  }
+                },
+                {
+                  text: "Отмена",
+                  className: "btn btn-secondary",
+                  dismiss: true
+                }
+              ]
+            });
+            return;
+          }
+        });
+
+        // --- ОТЗЫВЫ ---
+        const feedbackSection = document.getElementById("feedback-section");
+        const feedbackAnalytics = document.getElementById("feedback-analytics");
+        const feedbackRef = ref(db, "feedback");
+
+        onValue(feedbackRef, (snapshot) => {
+          let feedbacks = [];
+          const now = Date.now();
+          const monthMs = 30 * 24 * 60 * 60 * 1000;
+          snapshot.forEach(child => {
+            const fb = { id: child.key, ...child.val() };
+            // Удаляем отзывы старше месяца
+            let date = fb.date ? new Date(fb.date).getTime() : null;
+            if (date && now - date > monthMs) {
+              remove(ref(db, `feedback/${fb.id}`));
+              return; // не добавлять в список
+            }
+            feedbacks.push(fb);
+          });
+
+          // Аналитика: средние оценки по каждому вопросу
+          const questions = [
+            "Удовлетворённость сервисом",
+            "Удобство интерфейса",
+            "Качество приложений",
+            "Рекомендация друзьям"
+          ];
+          let sums = [0, 0, 0, 0], counts = [0, 0, 0, 0];
+          feedbacks.forEach(fb => {
+            for (let i = 0; i < 4; i++) {
+              if (typeof fb[`q${i+1}`] === "number") {
+                sums[i] += fb[`q${i+1}`];
+                counts[i]++;
+              }
+            }
+          });
+          let analyticsHtml = `
+            <div class="row text-center mb-3">
+              ${questions.map((q, i) => `
+                <div class="col-md-3 col-6 mb-2">
+                  <div class="card shadow-sm">
+                    <div class="card-body p-2">
+                      <div class="fw-bold mb-1" style="font-size:1.1rem">${q}</div>
+                      <div style="font-size:2rem;color:#ffd700;">
+                        ${counts[i] ? (sums[i]/counts[i]).toFixed(2) : "—"} 
+                        <span style="font-size:1.3rem;color:#ffd700;">&#9733;</span>
+                      </div>
+                      <div class="text-muted" style="font-size:0.9rem">${counts[i]} оценок</div>
+                    </div>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          `;
+          feedbackAnalytics.innerHTML = analyticsHtml;
+
+          // Список отзывов
+          if (!feedbacks.length) {
+            feedbackSection.textContent = "Пока нет отзывов.";
+            return;
+          }
+          let html = `<div class="table-responsive"><table class="table table-bordered table-sm align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Дата</th>
+              <th>Пользователь</th>
+              ${questions.map(q => `<th>${q.text}</th>`).join("")}
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>`;
+        feedbacks.reverse().forEach(fb => {
+          html += `<tr>
+            <td>${fb.date ? new Date(fb.date).toLocaleString() : "—"}</td>
+            <td>${fb.username || fb.uid || "—"}</td>`;
+          questions.forEach((q, i) => {
+            const key = `q${i+1}`;
+            if (q.type === "stars") {
+              const val = fb[key] || 0;
+              html += `<td style="color:#ffd700">${"★".repeat(val)}${"☆".repeat(5-val)}</td>`;
+            } else if (q.type === "select") {
+              html += `<td>${fb[key] ? fb[key] : ""}</td>`;
+            } else if (q.type === "text") {
+              html += `<td>${fb[key] ? fb[key].replace(/</g,"&lt;") : ""}</td>`;
+            }
+          });
+          html += `<td>
+            <button class="btn btn-sm btn-outline-danger delete-feedback-btn" data-id="${fb.id}" title="Удалить ответ">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </td></tr>`;
+        });
+        html += "</tbody></table></div>";
+        feedbackSection.innerHTML = html;
+
+        // Обработчик удаления
+        feedbackSection.querySelectorAll('.delete-feedback-btn').forEach(btn => {
+          btn.onclick = async function() {
+            if (confirm("Удалить этот ответ?")) {
+              await remove(ref(db, `feedback/${btn.dataset.id}`));
+              appendAlert("Ответ удалён", "danger");
+            }
+          };
+        });
+        });
+
+        // --- ВОПРОСЫ ОБРАТНОЙ СВЯЗИ ---
+        onValue(ref(db, "feedbackQuestions"), (qSnap) => {
+          const questions = qSnap.exists() ? qSnap.val() : [];
+          onValue(ref(db, "feedback"), (snapshot) => {
+            let feedbacks = [];
+            const now = Date.now();
+            const monthMs = 30 * 24 * 60 * 60 * 1000;
+            snapshot.forEach(child => {
+              const fb = { id: child.key, ...child.val() };
+              // Удаляем отзывы старше месяца
+              let date = fb.date ? new Date(fb.date).getTime() : null;
+              if (date && now - date > monthMs) {
+                remove(ref(db, `feedback/${fb.id}`));
+                return; // не добавлять в список
+              }
+              feedbacks.push(fb);
+            });
+
+            // --- Аналитика ---
+            let analyticsHtml = `<div class="row text-center mb-3">`;
+            questions.forEach((q, i) => {
+              if (q.type === "stars") {
+                let sum = 0, cnt = 0;
+                feedbacks.forEach(fb => { if (typeof fb[`q${i+1}`] === "number") { sum += fb[`q${i+1}`]; cnt++; } });
+                analyticsHtml += `
+                  <div class="col-md-3 col-6 mb-2">
+                    <div class="card shadow-sm">
+                      <div class="card-body p-2">
+                        <div class="fw-bold mb-1" style="font-size:1.1rem">${q.text}</div>
+                        <div style="font-size:2rem;color:#ffd700;">
+                          ${cnt ? (sum/cnt).toFixed(2) : "—"} 
+                          <span style="font-size:1.3rem;color:#ffd700;">&#9733;</span>
+                        </div>
+                        <div class="text-muted" style="font-size:0.9rem">${cnt} оценок</div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              } else if (q.type === "select") {
+                let counts = {};
+                feedbacks.forEach(fb => {
+                  const ans = fb[`q${i+1}`];
+                  if (ans) counts[ans] = (counts[ans]||0)+1;
+                });
+                const total = Object.values(counts).reduce((a,b)=>a+b,0);
+                const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+                const top = sorted[0];
+                analyticsHtml += `
+                  <div class="col-md-3 col-6 mb-2">
+                    <div class="card shadow-sm">
+                      <div class="card-body p-2">
+                        <div class="fw-bold mb-1" style="font-size:1.1rem">${q.text}</div>
+                        <div style="font-size:1.2rem;">
+                          ${top ? `${top[0]} <span class="badge bg-primary">${((top[1]/total)*100).toFixed(0)}%</span>` : "—"}
+                        </div>
+                        <button class="btn btn-link btn-sm p-0 mt-1" data-qidx="${i}" id="showMoreSelect${i}">Больше</button>
+                        <div class="d-none" id="selectStats${i}">
+                          ${sorted.map(([opt, cnt]) => `<div>${opt}: <b>${cnt}</b> (${((cnt/total)*100).toFixed(0)}%)</div>`).join("")}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                setTimeout(()=>{
+                  document.getElementById(`showMoreSelect${i}`)?.addEventListener('click', function(){
+                    const stats = document.getElementById(`selectStats${i}`);
+                    stats.classList.toggle('d-none');
+                    this.textContent = stats.classList.contains('d-none') ? 'Больше' : 'Скрыть';
+                  });
+                }, 100);
+              }
+              // text — не выводим аналитику
+            });
+            analyticsHtml += `</div>`;
+            feedbackAnalytics.innerHTML = analyticsHtml;
+
+            // --- Таблица отзывов ---
+            if (!feedbacks.length) {
+              feedbackSection.textContent = "Пока нет отзывов.";
+              return;
+            }
+            let html = `<div class="table-responsive"><table class="table table-bordered table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Дата</th>
+                  <th>Пользователь</th>
+                  ${questions.map(q => `<th>${q.text}</th>`).join("")}
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>`;
+            feedbacks.reverse().forEach(fb => {
+              html += `<tr>
+                <td>${fb.date ? new Date(fb.date).toLocaleString() : "—"}</td>
+                <td>${fb.username || fb.uid || "—"}</td>`;
+              questions.forEach((q, i) => {
+                const key = `q${i+1}`;
+                if (q.type === "stars") {
+                  const val = fb[key] || 0;
+                  html += `<td style="color:#ffd700">${"★".repeat(val)}${"☆".repeat(5-val)}</td>`;
+                } else if (q.type === "select") {
+                  html += `<td>${fb[key] ? fb[key] : ""}</td>`;
+                } else if (q.type === "text") {
+                  html += `<td>${fb[key] ? fb[key].replace(/</g,"&lt;") : ""}</td>`;
+                }
+              });
+              html += `<td>
+                <button class="btn btn-sm btn-outline-danger delete-feedback-btn" data-id="${fb.id}" title="Удалить ответ">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </td></tr>`;
+            });
+            html += "</tbody></table></div>";
+            feedbackSection.innerHTML = html;
+
+            // Обработчик удаления
+            feedbackSection.querySelectorAll('.delete-feedback-btn').forEach(btn => {
+              btn.onclick = async function() {
+                if (confirm("Удалить этот ответ?")) {
+                  await remove(ref(db, `feedback/${btn.dataset.id}`));
+                  appendAlert("Ответ удалён", "danger");
+                }
+              };
+            });
+          });
+        });
+      });
+
+      document.getElementById("logout-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        signOut(auth)
+          .then(() => {
+            window.location.href = "index.html";
+          })
+          .catch((error) => {
+            appendAlert("Ошибка выхода: " + error.message, "danger");
+          });
+      });
+      
+      // Для загрузки (тёмный фон, стандартный backdrop)
+
+
+// Для всех остальных (без стандартного backdrop, только ваш blur-overlay)
+function showAccountModal({ title, body, actions = [] }) {
+  document.getElementById('accountActionModalLabel').textContent = title;
+  document.getElementById('accountActionModalBody').innerHTML = body;
+  const footer = document.getElementById('accountActionModalFooter');
+  footer.innerHTML = '';
+  actions.forEach(btn => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = btn.className || 'btn btn-primary';
+    button.textContent = btn.text;
+    if (btn.dismiss) button.setAttribute('data-bs-dismiss', 'modal');
+    button.onclick = btn.onClick;
+    footer.appendChild(button);
+  });
+  // Важно: backdrop: false!
+  const modal = new bootstrap.Modal(document.getElementById('accountActionModal'), { backdrop: false });
+  modal.show();
+}
+
+// Редактирование вопросов обратной связи
+document.getElementById('editFeedbackQuestionsBtn').onclick = async () => {
+  const qRef = ref(db, "feedbackQuestions");
+  const snap = await get(qRef);
+  let questions = snap.exists() ? snap.val() : [];
+  if (!Array.isArray(questions)) questions = [];
+
+  // Генерируем форму
+  let html = `<div id="questions-list">`;
+  questions.forEach((q, i) => {
+    html += `
+      <div class="card mb-2 p-2">
+        <div class="d-flex align-items-center mb-2">
+          <input type="text" class="form-control me-2" name="qtext${i}" value="${q.text || ""}" placeholder="Текст вопроса">
+          <select class="form-select w-auto" name="qtype${i}">
+            <option value="stars" ${q.type==="stars"?"selected":""}>Звёздочки</option>
+            <option value="text" ${q.type==="text"?"selected":""}>Текст</option>
+            <option value="select" ${q.type==="select"?"selected":""}>Выбрать</option>
+          </select>
+          <button type="button" class="btn btn-danger btn-sm ms-2" onclick="this.closest('.card').remove()">✕</button>
+        </div>
+        <div class="mb-2" ${q.type!=="select"?'style="display:none"':''} data-options>
+          <input type="text" class="form-control" name="qopts${i}" value="${(q.options||[]).join(', ')}" placeholder="Варианты через запятую">
+        </div>
+      </div>
+    `;
+  });
+  html += `</div>
+    <button type="button" class="btn btn-outline-success" id="addQuestionBtn">Добавить вопрос</button>
+    <small class="text-muted d-block mt-2">Для "Выбрать" укажите варианты через запятую.</small>
+  `;
+  document.getElementById('editFeedbackQuestionsBody').innerHTML = html;
+
+  // Смена типа вопроса
+  document.querySelectorAll('select[name^="qtype"]').forEach(sel => {
+    sel.onchange = function() {
+      const card = this.closest('.card');
+      card.querySelector('[data-options]').style.display = this.value === "select" ? "" : "none";
+    };
+  });
+
+  // Добавить вопрос
+  document.getElementById('addQuestionBtn').onclick = () => {
+    const idx = document.querySelectorAll('#questions-list .card').length;
+    const card = document.createElement('div');
+    card.className = "card mb-2 p-2";
+    card.innerHTML = `
+      <div class="d-flex align-items-center mb-2">
+        <input type="text" class="form-control me-2" name="qtext${idx}" placeholder="Текст вопроса">
+        <select class="form-select w-auto" name="qtype${idx}">
+          <option value="stars">Звёздочки</option>
+          <option value="text">Текст</option>
+          <option value="select">Выбрать</option>
+        </select>
+        <button type="button" class="btn btn-danger btn-sm ms-2" onclick="this.closest('.card').remove()">✕</button>
+      </div>
+      <div class="mb-2" style="display:none" data-options>
+        <input type="text" class="form-control" name="qopts${idx}" placeholder="Варианты через запятую">
+      </div>
+    `;
+    card.querySelector('select').onchange = function() {
+      card.querySelector('[data-options]').style.display = this.value === "select" ? "" : "none";
+    };
+    document.getElementById('questions-list').appendChild(card);
+  };
+
+  // Показать модалку
+  new bootstrap.Modal(document.getElementById('editFeedbackQuestionsModal')).show();
+};
+
+// Сохранение вопросов
+document.getElementById('editFeedbackQuestionsForm').onsubmit = async function(e) {
+  e.preventDefault();
+  const cards = document.querySelectorAll('#questions-list .card');
+  let questions = [];
+  cards.forEach((card, i) => {
+    const text = card.querySelector(`input[name^="qtext"]`).value.trim();
+    const type = card.querySelector(`select[name^="qtype"]`).value;
+    let q = { text, type };
+    if (type === "select") {
+      q.options = card.querySelector(`input[name^="qopts"]`).value.split(',').map(s=>s.trim()).filter(Boolean);
+    }
+    questions.push(q);
+  });
+  await set(ref(db, "feedbackQuestions"), questions);
+  bootstrap.Modal.getInstance(document.getElementById('editFeedbackQuestionsModal')).hide();
+  appendAlert("Вопросы обновлены!", "success");
+};
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+
+    <!-- Добавьте в конец body -->
+<div class="modal fade" id="editFeedbackQuestionsModal" tabindex="-1" aria-labelledby="editFeedbackQuestionsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form class="modal-content" id="editFeedbackQuestionsForm">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editFeedbackQuestionsModalLabel">Редактировать вопросы обратной связи</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body" id="editFeedbackQuestionsBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="submit" class="btn btn-success">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+  </body>
+</html>

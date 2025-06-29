@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Редактирование аккаунта | ARTEnet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      #unsaved-bar {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 1050;
+        background: #ffc107;
+        color: #222;
+        text-align: center;
+        padding: 0.7rem 0;
+        font-weight: 500;
+        display: none;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.07);
+      }
+
+      #liveAlertPlaceholder {
+        position: fixed;
+        top: 70px; /* чуть ниже navbar */
+        left: 0;
+        right: 0;
+        z-index: 2000;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #liveAlertPlaceholder .alert {
+        pointer-events: auto;
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+  <body class="p-3 m-0 border-0 bd-example m-0 border-0">
+    <nav class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="main.html">
+          <img src="photos/logo-color-2.png" alt="ARTEnet" height="30" class="d-inline-block align-text-top">
+          Аккаунт
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="main.html">Главное</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="account.html">Аккаунт</a>
+            </li>
+          </ul>
+          <small>
+            <em>
+              <span class="navbar-text m-2" id="user-id">
+                <span class="navbar-text ms-auto" id="user-id"></span>
+              </span>
+            </em>
+          </small>
+        </div>
+      </div>
+    </nav>
+
+      <div class="container" style="max-width:600px;">
+        <h2 class="mb-4">Редактирование аккаунта</h2>
+        <form id="edit-form" autocomplete="off">
+          <div class="card mb-4">
+            <div class="card-header fw-bold">Общие данные</div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label">Имя пользователя</label>
+                <input type="text" class="form-control" id="username" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Новый пароль</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="password" placeholder="Оставьте пустым, чтобы не менять" autocomplete="new-password">
+                  <button class="btn btn-outline-secondary" type="button" id="togglePassword" tabindex="-1">
+                    <span id="eyeIcon" class="bi bi-eye"></span>
+                  </button>
+                </div>
+                <ul id="password-reqs-list" class="list-unstyled small mt-2 mb-0" style="display:none; opacity:0; transition: opacity .3s;">
+                  <li id="pw-len"><span class="bi bi-x-circle text-danger"></span> Минимум 8 символов</li>
+                  <li id="pw-lower"><span class="bi bi-x-circle text-danger"></span> Строчная буква</li>
+                  <li id="pw-upper"><span class="bi bi-x-circle text-danger"></span> Прописная буква</li>
+                  <li id="pw-digit"><span class="bi bi-x-circle text-danger"></span> Цифра</li>
+                </ul>
+              </div>
+              <div class="mb-3" id="password-confirm-block" style="display:none; opacity:0; transition:opacity .3s;">
+                <label class="form-label">Подтвердите новый пароль</label>
+                <input type="password" class="form-control" id="password-confirm" autocomplete="new-password">
+                <div id="password-confirm-msg" class="form-text text-danger" style="display:none;">Пароли не совпадают</div>
+              </div>
+              <!-- ИЗМЕНЕНИЕ ПАРОЛЯ ЧЕРЕЗ ПИСЬМО
+              <div class="mb-3">
+                <button type="button" class="btn btn-link p-0" id="send-reset-link">Изменить пароль через письмо на почту</button>
+              </div> -->
+              <div class="mb-3">
+                <label class="form-label">Дата регистрации</label>
+                <input type="text" class="form-control" id="reg-date" disabled>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-4">
+            <div class="card-header fw-bold">Приложения</div>
+            <div class="card-body" id="apps-list">
+              <div class="text-muted">Загрузка...</div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success w-100 mb-4" id="save-btn" disabled>Сохранить изменения</button>
+        </form>
+        <div id="liveAlertPlaceholder"></div>
+      </div>
+      <div id="unsaved-bar">Новые данные не сохранены</div>
+
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAuth, updateProfile, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getDatabase, ref, get, set, remove, update } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBZkU-HmTgsFV7McrsDr-Q5WkEBxkA2SD0",
+          authDomain: "artenetshop-7b884.firebaseapp.com",
+          projectId: "artenetshop-7b884",
+          storageBucket: "artenetshop-7b884.appspot.com",
+          messagingSenderId: "542098227452",
+          appId: "1:542098227452:web:ce14dfbbbd7ca0d34b5779",
+          measurementId: "G-8PDLBR77YN",
+          databaseURL: "https://artenetshop-7b884-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+        const appendAlert = (message, type) => {
+          while (alertPlaceholder.children.length >= 2) {
+            alertPlaceholder.removeChild(alertPlaceholder.firstChild);
+          }
+          const wrapper = document.createElement('div');
+          wrapper.className = `alert alert-${type} alert-dismissible fade show`;
+          wrapper.role = 'alert';
+          wrapper.innerHTML = `
+            <div>${message}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          alertPlaceholder.append(wrapper);
+          setTimeout(() => {
+            wrapper.classList.remove("show");
+            setTimeout(() => wrapper.remove(), 150);
+          }, 10000);
+        };
+
+        let initialData = {};
+        let unsaved = false;
+        let appsToDelete = new Set();
+
+        function setUnsaved(flag) {
+          unsaved = flag;
+          document.getElementById('unsaved-bar').style.display = flag ? 'block' : 'none';
+          document.getElementById('save-btn').disabled = !flag;
+        }
+
+        function checkPasswordReqs(pw) {
+          return {
+            len: pw.length >= 8,
+            lower: /[a-z]/.test(pw),
+            upper: /[A-Z]/.test(pw),
+            digit: /\d/.test(pw)
+          };
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+          if (!user || !user.emailVerified) {
+            window.location.href = "index.html";
+            return;
+          }
+          document.getElementById('user-id').textContent = user.email;
+
+          // Получаем данные пользователя из базы
+          const userDbRef = ref(db, `users/${user.uid}`);
+          const userDbSnap = await get(userDbRef);
+          const userData = userDbSnap.exists() ? userDbSnap.val() : {};
+          document.getElementById('username').value = userData.username || "";
+          document.getElementById('reg-date').value = userData.createdAt
+            ? new Date(userData.createdAt).toLocaleString()
+            : (user.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleString() : "—");
+
+          // --- Приложения ---
+          const appsListDiv = document.getElementById('apps-list');
+          appsListDiv.innerHTML = '';
+          appsToDelete = new Set();
+
+          if (userData.apps) {
+            // Получаем список appId пользователя
+            const userAppIds = Object.keys(userData.apps);
+            // Получаем данные о приложениях из базы
+            const appsDataSnap = await get(ref(db, `apps`));
+            const appsData = appsDataSnap.exists() ? appsDataSnap.val() : {};
+
+            // Для каждого приложения пользователя
+            for (const appId of userAppIds) {
+              // Получаем название приложения
+              const appTitle = appsData[appId]?.title || appId;
+              // Получаем дату получения из apps/{appId}/userData/{UID}/receivedAt
+              let receivedAt = "—";
+              const receivedSnap = await get(ref(db, `apps/${appId}/userData/${user.uid}/receivedAt`));
+              if (receivedSnap.exists()) {
+                receivedAt = new Date(receivedSnap.val()).toLocaleString();
+              }
+
+              const appDiv = document.createElement('div');
+              appDiv.className = "d-flex align-items-center justify-content-between border rounded p-2 mb-2";
+              appDiv.innerHTML = `
+                <div>
+                  <b class="app-title">${appTitle}</b>
+                  <div class="small text-muted">Дата получения: ${receivedAt}</div>
+                  <div class="app-delete-warning text-danger small mt-1" style="display:none;">
+                    При нажатии на кнопку <b>Сохранить</b> вы удаляете приложение со своего аккаунта и не сможете восстановить ваши данные в приложении, скопленные за время вашего пользования им.
+                  </div>
+                </div>
+                <div class="app-btns">
+                  <button class="btn btn-outline-danger btn-sm ms-2 app-delete-btn" data-app-key="${appId}" type="button">Удалить</button>
+                </div>
+              `;
+              appsListDiv.appendChild(appDiv);
+            }
+          } else {
+            appsListDiv.innerHTML = '<div class="text-muted">Нет приложений</div>';
+          }
+
+          // --- Логика удаления приложения ---
+          appsListDiv.querySelectorAll('.app-delete-btn').forEach(btn => {
+            btn.onclick = () => {
+              const appDiv = btn.closest('.d-flex');
+              const appKey = btn.dataset.appKey;
+              appDiv.querySelector('.app-title').style.textDecoration = "line-through";
+              appDiv.querySelector('.app-delete-warning').style.display = "";
+              appsToDelete.add(appKey);
+              btn.style.display = "none";
+              // Кнопка "Оставить"
+              let keepBtn = document.createElement('button');
+              keepBtn.className = "btn btn-outline-secondary btn-sm ms-2 app-keep-btn";
+              keepBtn.textContent = "Оставить";
+              keepBtn.onclick = () => {
+                appDiv.querySelector('.app-title').style.textDecoration = "";
+                appDiv.querySelector('.app-delete-warning').style.display = "none";
+                appsToDelete.delete(appKey);
+                keepBtn.remove();
+                btn.style.display = "";
+                setUnsaved(appsToDelete.size > 0 || document.getElementById('username').value !== initialData.username || document.getElementById('password').value.length > 0);
+              };
+              appDiv.querySelector('.app-btns').appendChild(keepBtn);
+              setUnsaved(true);
+            };
+          });
+
+          // Если что-то изменилось в приложениях — показываем unsaved
+          const observer = new MutationObserver(() => {
+            setUnsaved(appsToDelete.size > 0 || document.getElementById('username').value !== initialData.username || document.getElementById('password').value.length > 0);
+          });
+          observer.observe(appsListDiv, { childList: true, subtree: true });
+
+          // --- Пароль: требования, глаз, подтверждение ---
+          const passwordInput = document.getElementById('password');
+          const passwordConfirmBlock = document.getElementById('password-confirm-block');
+          const passwordConfirmInput = document.getElementById('password-confirm');
+          const passwordConfirmMsg = document.getElementById('password-confirm-msg');
+          const togglePasswordBtn = document.getElementById('togglePassword');
+          const reqsList = document.getElementById('password-reqs-list');
+          let passwordValid = false, passwordConfirmed = false;
+
+          passwordInput.addEventListener('input', () => {
+            const pw = passwordInput.value;
+            // Показывать требования только если поле не пустое
+            if (!pw) {
+              reqsList.style.opacity = "0";
+              setTimeout(() => reqsList.style.display = "none", 300);
+              reqsList.querySelectorAll('span').forEach(span => {
+                span.className = "bi bi-x-circle text-danger";
+              });
+              passwordConfirmBlock.style.opacity = "0";
+              setTimeout(() => passwordConfirmBlock.style.display = "none", 300);
+              passwordConfirmInput.value = "";
+              passwordConfirmed = false;
+              passwordConfirmMsg.style.display = "none";
+              return;
+            }
+            reqsList.style.display = "";
+            setTimeout(() => reqsList.style.opacity = "1", 10);
+
+            const reqs = checkPasswordReqs(pw);
+            document.getElementById('pw-len').firstElementChild.className = reqs.len ? "bi bi-check-circle text-success" : "bi bi-x-circle text-danger";
+            document.getElementById('pw-lower').firstElementChild.className = reqs.lower ? "bi bi-check-circle text-success" : "bi bi-x-circle text-danger";
+            document.getElementById('pw-upper').firstElementChild.className = reqs.upper ? "bi bi-check-circle text-success" : "bi bi-x-circle text-danger";
+            document.getElementById('pw-digit').firstElementChild.className = reqs.digit ? "bi bi-check-circle text-success" : "bi bi-x-circle text-danger";
+            passwordValid = reqs.len && reqs.lower && reqs.upper && reqs.digit;
+
+            if (passwordValid) {
+              reqsList.style.opacity = "0";
+              setTimeout(() => {
+                reqsList.style.display = "none";
+                passwordConfirmBlock.style.display = "";
+                setTimeout(() => passwordConfirmBlock.style.opacity = "1", 10);
+              }, 300);
+            } else {
+              reqsList.style.display = "";
+              reqsList.style.opacity = "1";
+              passwordConfirmBlock.style.opacity = "0";
+              setTimeout(() => passwordConfirmBlock.style.display = "none", 300);
+              passwordConfirmInput.value = "";
+              passwordConfirmed = false;
+              passwordConfirmMsg.style.display = "none";
+            }
+            setUnsaved(appsToDelete.size > 0 || document.getElementById('username').value !== initialData.username || pw.length > 0);
+          });
+
+          passwordConfirmInput.addEventListener('input', () => {
+            passwordConfirmed = passwordInput.value === passwordConfirmInput.value;
+            passwordConfirmMsg.style.display = passwordConfirmed || !passwordConfirmInput.value ? "none" : "";
+            setUnsaved(appsToDelete.size > 0 || document.getElementById('username').value !== initialData.username || passwordInput.value.length > 0);
+          });
+
+          togglePasswordBtn.onclick = () => {
+            const type = passwordInput.type === "password" ? "text" : "password";
+            passwordInput.type = type;
+            passwordConfirmInput.type = type;
+            document.getElementById('eyeIcon').className = type === "password" ? "bi bi-eye" : "bi bi-eye-slash";
+          };
+
+          // --- Сброс пароля через письмо ---
+          /*
+          document.getElementById('send-reset-link').onclick = async () => {
+            try {
+              await auth.sendPasswordResetEmail(user.email);
+              appendAlert("Письмо для смены пароля отправлено на вашу почту.", "success");
+            } catch (e) {
+              appendAlert("Ошибка отправки письма: " + e.message, "danger");
+            }
+          };*/
+
+          // --- Отслеживание username ---
+          document.getElementById('username').addEventListener('input', () => {
+            setUnsaved(appsToDelete.size > 0 || document.getElementById('username').value !== initialData.username || passwordInput.value.length > 0);
+          });
+
+          // --- Сохранение изменений ---
+          document.getElementById('edit-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const newUsername = document.getElementById('username').value.trim();
+            const newPassword = passwordInput.value;
+            let updates = {};
+            let changed = false;
+
+            // Username
+            if (newUsername !== initialData.username) {
+              updates.username = newUsername;
+              changed = true;
+            }
+
+            // Пароль
+            if (newPassword.length > 0) {
+              if (!passwordValid) {
+                appendAlert("Пароль не соответствует требованиям.", "danger");
+                return;
+              }
+              if (!passwordConfirmed) {
+                appendAlert("Пароли не совпадают.", "danger");
+                return;
+              }
+              try {
+                await updatePassword(user, newPassword);
+                changed = true;
+              } catch (err) {
+                if (err.code === "auth/requires-recent-login") {
+                  appendAlert("Для смены пароля необходимо выйти и войти в аккаунт заново.", "warning");
+                } else {
+                  appendAlert("Ошибка смены пароля: " + err.message, "danger");
+                }
+                return;
+              }
+            }
+
+            // Удаление приложений
+            for (const appKey of appsToDelete) {
+              await remove(ref(db, `users/${user.uid}/apps/${appKey}`));
+              await remove(ref(db, `apps/${appKey}/userData/${user.uid}`));
+            }
+            if (appsToDelete.size > 0) changed = true;
+
+            // Сохраняем username
+            if (changed) {
+              await update(ref(db, `users/${user.uid}`), updates);
+              appendAlert("Изменения сохранены", "success");
+              setUnsaved(false);
+              initialData.username = newUsername;
+              passwordInput.value = "";
+              passwordConfirmInput.value = "";
+              passwordConfirmBlock.style.display = "none";
+              appsToDelete.clear();
+              // Обновить список приложений после удаления
+              location.reload();
+            } else {
+              appendAlert("Нет изменений для сохранения", "info");
+            }
+          };
+
+          // Предупреждение при попытке уйти со страницы с несохранёнными изменениями
+          window.onbeforeunload = () => unsaved ? "У вас есть несохранённые изменения!" : undefined;
+        });
+      </script>
+      <script type="module" src="/js/autologout.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  </body>
+</html>
