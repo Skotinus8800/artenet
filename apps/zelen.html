@@ -277,7 +277,7 @@
         currentUser = user;
         document.getElementById('user-id').textContent = user.email || user.uid;
         // Получить счета пользователя
-        const accsSnap = await get(ref(db, `bank/accounts/${user.uid}/accounts`));
+        const accsSnap = await get(ref(db, `zelen/accounts/${user.uid}/accounts`));
         console.log('accsSnap.exists()', accsSnap.exists());
         console.log('accsSnap.val()', accsSnap.val());
         const accountSelect = document.getElementById('accountSelect');
@@ -304,7 +304,7 @@
           }
         } else {
           // Если счетов нет, проверяем заявку
-          const reqSnap = await get(ref(db, `bank/accountRequests/${user.uid}`));
+          const reqSnap = await get(ref(db, `zelen/accountRequests/${user.uid}`));
           if (reqSnap.exists() && reqSnap.val().status === 'pending') {
             // Есть заявка, ждем подтверждения
             document.getElementById('openAccountBlock').style.display = 'none';
@@ -338,7 +338,7 @@
 
       // Загрузка истории операций
       async function loadAccountHistory(accountId) {
-        const historyRef = ref(db, `bank/accounts/${currentUser.uid}/accounts/${accountId}/history`);
+        const historyRef = ref(db, `zelen/accounts/${currentUser.uid}/accounts/${accountId}/history`);
         const historySnap = await get(historyRef);
         
         if (!historySnap.exists()) {
@@ -446,10 +446,10 @@
         
         // Удалить старые записи из базы
         const accountId = document.getElementById('accountSelect').value;
-        const historyRef = ref(db, `bank/accounts/${currentUser.uid}/accounts/${accountId}/history`);
+        const historyRef = ref(db, `zelen/accounts/${currentUser.uid}/accounts/${accountId}/history`);
         const oldTransactions = transactions.filter(t => t.date < threeMonthsAgo);
         oldTransactions.forEach(async (trans) => {
-          await remove(ref(db, `bank/accounts/${currentUser.uid}/accounts/${accountId}/history/${trans.key}`));
+          await remove(ref(db, `zelen/accounts/${currentUser.uid}/accounts/${accountId}/history/${trans.key}`));
         });
 
         filteredTrans.forEach(trans => {
@@ -605,7 +605,7 @@
           appendAlert('Пожалуйста, заполните все поля', 'warning');
           return;
         }
-        await set(ref(db, `bank/accountRequests/${currentUser.uid}`), {
+        await set(ref(db, `zelen/accountRequests/${currentUser.uid}`), {
           firstName, lastName, city, country, currency,
           email: currentUser.email || '',
           createdAt: Date.now(),
@@ -628,7 +628,7 @@
       });
 
       async function loadCurrencies() {
-        const curSnap = await get(ref(db, 'bank/currencies'));
+        const curSnap = await get(ref(db, 'zelen/currencies'));
         const select = document.getElementById('accCurrency');
         select.innerHTML = '';
         if (curSnap.exists()) {
@@ -650,7 +650,7 @@
         // Загрузить валюты
         await loadCurrenciesToSelect('newAccCurrency');
         // Если есть счета — показать выбор для оплаты
-        const accsSnap = await get(ref(db, `bank/accounts/${currentUser.uid}/accounts`));
+        const accsSnap = await get(ref(db, `zelen/accounts/${currentUser.uid}/accounts`));
         const paySelect = document.getElementById('payFromAccount');
         paySelect.innerHTML = '';
         let accounts = [];
@@ -669,7 +669,7 @@
           }
         }
         // Показать комиссию
-        const feeSnap = await get(ref(db, 'bank/newAccountFee'));
+        const feeSnap = await get(ref(db, 'zelen/newAccountFee'));
         const fee = feeSnap.exists() ? parseFloat(feeSnap.val()) : 0;
         document.getElementById('newAccountFeeInfo').textContent = fee > 0 ? `Комиссия за открытие: ${fee} EUR` : '';
         modal.show();
@@ -710,11 +710,11 @@
               }
               // Списать комиссию
               const newBalance = Math.round((acc.balance - fee) * 100) / 100;
-              await update(ref(db, `bank/accounts/${currentUser.uid}/accounts/${payFrom}`), {balance: newBalance});
+              await update(ref(db, `zelen/accounts/${currentUser.uid}/accounts/${payFrom}`), {balance: newBalance});
               
               // Записать комиссию в историю
               const { push } = await import('https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js');
-              const historyRef = ref(db, `bank/accounts/${currentUser.uid}/accounts/${payFrom}/history`);
+              const historyRef = ref(db, `zelen/accounts/${currentUser.uid}/accounts/${payFrom}/history`);
               await push(historyRef, {
                 type: 'fee',
                 amount: fee,
@@ -723,7 +723,7 @@
               });
             }
             // Создать заявку
-            await set(ref(db, `bank/accountRequests/${currentUser.uid}_${Date.now()}`), {
+            await set(ref(db, `zelen/accountRequests/${currentUser.uid}_${Date.now()}`), {
               currency,
               payFrom: payFrom || null,
               email: currentUser.email || '',
@@ -745,7 +745,7 @@
       };
 
       async function loadCurrenciesToSelect(selectId) {
-        const curSnap = await get(ref(db, 'bank/currencies'));
+        const curSnap = await get(ref(db, 'zelen/currencies'));
         const select = document.getElementById(selectId);
         select.innerHTML = '';
         if (curSnap.exists()) {
