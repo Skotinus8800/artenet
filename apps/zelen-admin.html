@@ -475,7 +475,7 @@
       async function loadRequests() {
         const list = document.getElementById('requestsList');
         list.innerHTML = '<div class="text-center text-secondary">Загрузка...</div>';
-        const reqSnap = await get(ref(db, 'bank/accountRequests'));
+        const reqSnap = await get(ref(db, 'zelen/accountRequests'));
         if (!reqSnap.exists()) {
           list.innerHTML = '<div class="alert alert-success text-center">Нет новых заявок</div>';
           return;
@@ -516,7 +516,7 @@
         console.log('approveAccount: start, uid =', uid);
         // Получаем заявку
         try {
-          const reqSnap = await get(ref(db, `bank/accountRequests/${uid}`));
+          const reqSnap = await get(ref(db, `zelen/accountRequests/${uid}`));
           console.log('approveAccount: get accountRequests', reqSnap.exists(), reqSnap.val());
           if (!reqSnap.exists()) {
             appendAlert('Заявка не найдена', 'danger');
@@ -534,7 +534,7 @@
           
           // Если это второй счёт (есть _ в uid), берём данные из первого счёта
           if (uid.includes('_')) {
-            const existingAccsSnap = await get(ref(db, `bank/accounts/${realUid}/accounts`));
+            const existingAccsSnap = await get(ref(db, `zelen/accounts/${realUid}/accounts`));
             if (existingAccsSnap.exists()) {
               const existingAccs = Object.values(existingAccsSnap.val());
               if (existingAccs.length > 0) {
@@ -548,13 +548,13 @@
           }
           
           // Проверяем, нет ли уже счёта с таким номером (можно разрешить несколько счетов)
-          // const accsSnap = await get(ref(db, `bank/accounts/${realUid}/accounts`));
+          // const accsSnap = await get(ref(db, `zelen/accounts/${realUid}/accounts`));
           // Генерируем уникальный номер счёта
           let accNum;
           let unique = false;
           while (!unique) {
             accNum = generateAccountNumber();
-            const allAccs = await get(ref(db, 'bank/accounts'));
+            const allAccs = await get(ref(db, 'zelen/accounts'));
             console.log('approveAccount: get all accounts', allAccs.exists(), allAccs.val());
             unique = true;
             if (allAccs.exists()) {
@@ -572,8 +572,8 @@
           }
           // Создаём счёт по новой структуре
           const { push } = await import('https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js');
-          const newAccRef = push(ref(db, `bank/accounts/${realUid}/accounts`));
-          console.log('Путь для записи:', `bank/accounts/${realUid}/accounts`);
+          const newAccRef = push(ref(db, `zelen/accounts/${realUid}/accounts`));
+          console.log('Путь для записи:', `zelen/accounts/${realUid}/accounts`);
           await set(newAccRef, {
             accountNumber: accNum,
             balance: 0,
@@ -587,7 +587,7 @@
             status: 'active'
           });
           console.log('approveAccount: account created');
-          await remove(ref(db, `bank/accountRequests/${uid}`));
+          await remove(ref(db, `zelen/accountRequests/${uid}`));
           console.log('approveAccount: accountRequests removed');
           appendAlert('Счёт успешно создан!', 'success');
           loadRequests();
@@ -600,7 +600,7 @@
       window.rejectAccount = async (uid) => {
         try {
           // Получить данные заявки перед удалением
-          const reqSnap = await get(ref(db, `bank/accountRequests/${uid}`));
+          const reqSnap = await get(ref(db, `zelen/accountRequests/${uid}`));
           if (reqSnap.exists()) {
             const req = reqSnap.val();
             
@@ -610,24 +610,24 @@
               const payFromAccountId = req.payFrom;
               
               // Получить комиссию за открытие нового счёта
-              const newAccountFeeSnap = await get(ref(db, 'bank/newAccountFee'));
+              const newAccountFeeSnap = await get(ref(db, 'zelen/newAccountFee'));
               const fee = newAccountFeeSnap.exists() ? parseFloat(newAccountFeeSnap.val()) : 0;
               
               if (fee > 0) {
                 // Получить текущий баланс счёта
-                const accountSnap = await get(ref(db, `bank/accounts/${realUid}/accounts/${payFromAccountId}`));
+                const accountSnap = await get(ref(db, `zelen/accounts/${realUid}/accounts/${payFromAccountId}`));
                 if (accountSnap.exists()) {
                   const account = accountSnap.val();
                   const newBalance = Math.round((account.balance + fee) * 100) / 100;
                   
                   // Вернуть комиссию
-                  await update(ref(db, `bank/accounts/${realUid}/accounts/${payFromAccountId}`), {
+                  await update(ref(db, `zelen/accounts/${realUid}/accounts/${payFromAccountId}`), {
                     balance: newBalance
                   });
                   
                   // Записать возврат комиссии в историю
                   const { push } = await import('https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js');
-                  const historyRef = ref(db, `bank/accounts/${realUid}/accounts/${payFromAccountId}/history`);
+                  const historyRef = ref(db, `zelen/accounts/${realUid}/accounts/${payFromAccountId}/history`);
                   await push(historyRef, {
                     type: 'refund',
                     amount: fee,
@@ -640,7 +640,7 @@
           }
           
           // Удалить заявку
-          await remove(ref(db, `bank/accountRequests/${uid}`));
+          await remove(ref(db, `zelen/accountRequests/${uid}`));
           appendAlert('Заявка отклонена. Комиссия возвращена.', 'info');
           loadRequests();
         } catch (e) {
@@ -661,7 +661,7 @@
       });
 
       async function loadCurrenciesToSelect(selectId, selected) {
-        const curSnap = await get(ref(db, 'bank/currencies'));
+        const curSnap = await get(ref(db, 'zelen/currencies'));
         const select = document.getElementById(selectId);
         select.innerHTML = '';
         if (curSnap.exists()) {
@@ -682,7 +682,7 @@
 
       // Реализовать функцию для редактирования валюты:
       window.editCurrencyModal = async function(code) {
-        const currencySnap = await get(ref(db, `bank/currencies/${code}`));
+        const currencySnap = await get(ref(db, `zelen/currencies/${code}`));
         if (!currencySnap.exists()) {
           appendAlert('Валюта не найдена', 'danger');
           return;
@@ -716,11 +716,11 @@
           try {
             // Если код валюты изменился, удалить старую и создать новую
             if (newCode !== code) {
-              await remove(ref(db, `bank/currencies/${code}`));
+              await remove(ref(db, `zelen/currencies/${code}`));
             }
             
             // Сохранить валюту
-            await set(ref(db, `bank/currencies/${newCode}`), { 
+            await set(ref(db, `zelen/currencies/${newCode}`), { 
               name, 
               base, 
               rate, 
@@ -745,7 +745,7 @@
           if (!confirm(`Удалить валюту ${code}?`)) return;
           
           try {
-            await remove(ref(db, `bank/currencies/${code}`));
+            await remove(ref(db, `zelen/currencies/${code}`));
             
             // Обновить конвертер
             await window.currencyConverter.loadRatesFromAdmin();
@@ -765,7 +765,7 @@
         if (!confirm(`Удалить валюту ${code}?`)) return;
         
         try {
-          await remove(ref(db, `bank/currencies/${code}`));
+          await remove(ref(db, `zelen/currencies/${code}`));
           
           // Обновить конвертер
           await window.currencyConverter.loadRatesFromAdmin();
@@ -835,7 +835,7 @@
         }
         
         try {
-          await set(ref(db, 'bank/conversionTax'), tax);
+          await set(ref(db, 'zelen/conversionTax'), tax);
           
           // Обновить налог в конвертере
           window.currencyConverter.conversionTax = tax;
@@ -854,13 +854,13 @@
 
       // При загрузке страницы:
       (async function(){
-        const feeSnap = await get(ref(db, 'bank/feePercent'));
+        const feeSnap = await get(ref(db, 'zelen/feePercent'));
         if (feeSnap.exists()) document.getElementById('feePercent').value = feeSnap.val();
-        const newFeeSnap = await get(ref(db, 'bank/newAccountFee'));
+        const newFeeSnap = await get(ref(db, 'zelen/newAccountFee'));
         if (newFeeSnap.exists()) document.getElementById('newAccountFee').value = newFeeSnap.val();
         
         // Загрузить настройки онлайн-платежей
-        const settingsSnap = await get(ref(db, 'bank/payments/settings'));
+        const settingsSnap = await get(ref(db, 'zelen/payments/settings'));
         if (settingsSnap.exists()) {
           const settings = settingsSnap.val();
           document.getElementById('paymentsFee').value = settings.fee || 0;
@@ -875,7 +875,7 @@
         const minAmount = parseFloat(document.getElementById('paymentsMinAmount').value) || 0;
         const maxAmount = parseFloat(document.getElementById('paymentsMaxAmount').value) || 0;
 
-        await set(ref(db, 'bank/payments/settings'), {
+        await set(ref(db, 'zelen/payments/settings'), {
           fee,
           minAmount,
           maxAmount,
@@ -900,10 +900,10 @@
           return;
         }
 
-        const paymentId = push(ref(db, 'bank/paymentLinks')).key;
+        const paymentId = push(ref(db, 'zelen/paymentLinks')).key;
         const expiresAtTimestamp = expiresAt ? new Date(expiresAt).getTime() : null;
 
-        await set(ref(db, `bank/paymentLinks/${paymentId}`), {
+        await set(ref(db, `zelen/paymentLinks/${paymentId}`), {
           amount,
           currency,
           description,
@@ -951,7 +951,7 @@
         const list = document.getElementById('paymentLinksList');
         list.innerHTML = '<div class="text-center text-secondary">Загрузка...</div>';
         
-        const linksSnap = await get(ref(db, 'bank/paymentLinks'));
+        const linksSnap = await get(ref(db, 'zelen/paymentLinks'));
         if (!linksSnap.exists()) {
           list.innerHTML = '<div class="alert alert-info text-center">Ссылки не найдены</div>';
           return;
@@ -1018,7 +1018,7 @@
       window.deletePaymentLink = async function(linkId) {
         if (!confirm('Удалить эту ссылку для платежа?')) return;
         
-        await remove(ref(db, `bank/paymentLinks/${linkId}`));
+        await remove(ref(db, `zelen/paymentLinks/${linkId}`));
         renderPaymentLinks();
         appendAlert('Ссылка удалена', 'success');
       };
@@ -1028,7 +1028,7 @@
         const history = document.getElementById('paymentsHistory');
         history.innerHTML = '<div class="text-center text-secondary">Загрузка истории...</div>';
         
-        const historySnap = await get(ref(db, 'bank/payments/history'));
+        const historySnap = await get(ref(db, 'zelen/payments/history'));
         if (!historySnap.exists()) {
           history.innerHTML = '<div class="alert alert-info text-center">История платежей пуста</div>';
           return;
@@ -1072,7 +1072,7 @@
       document.getElementById('saveFeeBtn').onclick = async function() {
         const fee = parseFloat(document.getElementById('feePercent').value);
         if (isNaN(fee)) return;
-        await set(ref(db, 'bank/feePercent'), fee);
+        await set(ref(db, 'zelen/feePercent'), fee);
         appendAlert('Комиссия сохранена', 'success');
       };
 
@@ -1080,7 +1080,7 @@
       document.getElementById('saveNewAccountFeeBtn').onclick = async function() {
         const fee = parseFloat(document.getElementById('newAccountFee').value);
         if (isNaN(fee)) return;
-        await set(ref(db, 'bank/newAccountFee'), fee);
+        await set(ref(db, 'zelen/newAccountFee'), fee);
         appendAlert('Цена открытия нового счёта сохранена', 'success');
       };
 
@@ -1097,7 +1097,7 @@
         const user = userSnap.val();
         userInfoDiv.innerHTML = `<b>Email:</b> ${user.email || ''}<br><b>Имя:</b> ${user.firstName || ''} ${user.lastName || ''}<br><b>UID:</b> <span class="account-num">${uid}</span>`;
         // Счета
-        const accsSnap = await get(ref(db, `bank/accounts/${uid}/accounts`));
+        const accsSnap = await get(ref(db, `zelen/accounts/${uid}/accounts`));
         if (!accsSnap.exists()) {
           userAccountsDiv.innerHTML = '<div class="alert alert-warning">Нет счетов</div>';
         } else {
@@ -1135,7 +1135,7 @@
 
       // Резервный счёт банка (BANK_RESERVE)
       async function renderBankReserve() {
-        const accsSnap = await get(ref(db, 'bank/accounts/BANK_RESERVE/accounts'));
+        const accsSnap = await get(ref(db, 'zelen/accounts/BANK_RESERVE/accounts'));
         let html = '';
         if (accsSnap.exists()) {
           for (const [accId, acc] of Object.entries(accsSnap.val())) {
@@ -1166,7 +1166,7 @@
         document.getElementById('bankReserveInfo').innerHTML = html;
         // Если нет счёта — подгрузить валюты и обработчик
         if (!accsSnap.exists()) {
-          const curSnap = await get(ref(db, 'bank/currencies'));
+          const curSnap = await get(ref(db, 'zelen/currencies'));
           const select = document.getElementById('reserveCurrency');
           select.innerHTML = '';
           if (curSnap.exists()) {
@@ -1187,7 +1187,7 @@
             if (!currency || !accountNumber || isNaN(balance)) return;
             balance = Math.round(balance * 100) / 100;
             const { push } = await import('https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js');
-            const newAccRef = push(ref(db, 'bank/accounts/BANK_RESERVE/accounts'));
+            const newAccRef = push(ref(db, 'zelen/accounts/BANK_RESERVE/accounts'));
             await set(newAccRef, {
               accountNumber,
               balance,
@@ -1216,11 +1216,11 @@
         let amount = parseFloat(document.getElementById('bankReserveAmount').value);
         if (isNaN(amount) || amount === 0) return;
         amount = Math.round(amount * 100) / 100;
-        const accsSnap = await get(ref(db, 'bank/accounts/BANK_RESERVE/accounts'));
+        const accsSnap = await get(ref(db, 'zelen/accounts/BANK_RESERVE/accounts'));
         if (!accsSnap.exists()) return;
         const [accId, acc] = Object.entries(accsSnap.val())[0];
         const newBalance = Math.round(((acc.balance || 0) + amount) * 100) / 100;
-        await set(ref(db, `bank/accounts/BANK_RESERVE/accounts/${accId}`), {
+        await set(ref(db, `zelen/accounts/BANK_RESERVE/accounts/${accId}`), {
           ...acc,
           balance: newBalance
         });
@@ -1236,7 +1236,7 @@
           infoDiv.innerHTML = '';
           return;
         }
-        const accsSnap = await get(ref(db, 'bank/accounts'));
+        const accsSnap = await get(ref(db, 'zelen/accounts'));
         let found = false;
         if (accsSnap.exists()) {
           for (const [uid, userAccs] of Object.entries(accsSnap.val())) {
@@ -1262,7 +1262,7 @@
           return;
         }
         // Найти получателя
-        const accsSnap = await get(ref(db, 'bank/accounts'));
+        const accsSnap = await get(ref(db, 'zelen/accounts'));
         let toUid = null, toAccountKey = null, toAcc = null;
         if (accsSnap.exists()) {
           for (const [uid, userAccs] of Object.entries(accsSnap.val())) {
@@ -1282,7 +1282,7 @@
           return;
         }
         // Найти резервный счёт
-        const reserveSnap = await get(ref(db, 'bank/accounts/BANK_RESERVE/accounts'));
+        const reserveSnap = await get(ref(db, 'zelen/accounts/BANK_RESERVE/accounts'));
         if (!reserveSnap.exists()) {
           appendAlert('Резервный счёт не найден', 'danger');
           return;
@@ -1296,13 +1296,13 @@
         // Выполнить перевод
         try {
           await update(ref(db), {
-            [`bank/accounts/BANK_RESERVE/accounts/${reserveAccId}/balance`]: Math.round((reserveAcc.balance - roundedAmount) * 100) / 100,
-            [`bank/accounts/${toUid}/accounts/${toAccountKey}/balance`]: Math.round(((toAcc.balance || 0) + roundedAmount) * 100) / 100
+            [`zelen/accounts/BANK_RESERVE/accounts/${reserveAccId}/balance`]: Math.round((reserveAcc.balance - roundedAmount) * 100) / 100,
+            [`zelen/accounts/${toUid}/accounts/${toAccountKey}/balance`]: Math.round(((toAcc.balance || 0) + roundedAmount) * 100) / 100
           });
           // История
           const now = Date.now();
-          const reserveHistRef = ref(db, `bank/accounts/BANK_RESERVE/accounts/${reserveAccId}/history`);
-          const toHistRef = ref(db, `bank/accounts/${toUid}/accounts/${toAccountKey}/history`);
+          const reserveHistRef = ref(db, `zelen/accounts/BANK_RESERVE/accounts/${reserveAccId}/history`);
+          const toHistRef = ref(db, `zelen/accounts/${toUid}/accounts/${toAccountKey}/history`);
           await push(reserveHistRef, {
             type: 'transfer_out',
             to: toAccount,
@@ -1345,7 +1345,7 @@
       async function renderAccountsList(filter = '') {
         const list = document.getElementById('accountsList');
         list.innerHTML = '<div class="text-center text-secondary">Загрузка...';
-        const accsSnap = await get(ref(db, 'bank/accounts'));
+        const accsSnap = await get(ref(db, 'zelen/accounts'));
         const usersSnap = await get(ref(db, 'users'));
         if (!accsSnap.exists()) {
           list.innerHTML = '<div class="alert alert-warning text-center">Счета не найдены</div>';
@@ -1385,7 +1385,7 @@
       document.getElementById('accountsSearchInput').addEventListener('input', e => renderAccountsList(e.target.value));
 
       window.editAccountModalShow = async function(uid, accId) {
-        const accSnap = await get(ref(db, `bank/accounts/${uid}/accounts/${accId}`));
+        const accSnap = await get(ref(db, `zelen/accounts/${uid}/accounts/${accId}`));
         if (!accSnap.exists()) return;
         const acc = accSnap.val();
         document.getElementById('editFirstName').value = acc.firstName || '';
@@ -1398,7 +1398,7 @@
         document.getElementById('editAccountNumber').value = acc.accountNumber || '';
         document.getElementById('editAccountForm').onsubmit = async function(e) {
           e.preventDefault();
-          await set(ref(db, `bank/accounts/${uid}/accounts/${accId}`), {
+          await set(ref(db, `zelen/accounts/${uid}/accounts/${accId}`), {
             accountNumber: acc.accountNumber,
             balance: parseFloat(document.getElementById('editBalance').value),
             createdAt: acc.createdAt,
@@ -1416,7 +1416,7 @@
         };
         document.getElementById('deleteAccountBtn').onclick = async function() {
           if (!confirm('Удалить этот счёт?')) return;
-          await remove(ref(db, `bank/accounts/${uid}/accounts/${accId}`));
+          await remove(ref(db, `zelen/accounts/${uid}/accounts/${accId}`));
           bootstrap.Modal.getInstance(document.getElementById('editAccountModal')).hide();
           renderAccountsList(document.getElementById('accountsSearchInput').value);
           appendAlert('Счёт удалён', 'info');
@@ -1455,7 +1455,7 @@
           
           try {
             // Добавить валюту в базу данных
-            await set(ref(db, `bank/currencies/${code}`), { 
+            await set(ref(db, `zelen/currencies/${code}`), { 
               name, 
               base, 
               rate, 
